@@ -1,97 +1,276 @@
-# Brew & Bean — Coffee Management System
+<div align="center">
 
-A full-stack coffee shop management system: the existing customer and manager
-frontend, now backed by a real **Node.js + Express.js + SQLite** API. Every
-account, order, reservation, contact message, menu item, and inventory record
-is stored permanently in `backend/coffee_shop.db`.
+# ☕ Brew & Bean
+### Coffee Management System
 
-## Project structure
+<p>
+A full-stack coffee shop management system for managing customers,
+orders, reservations, products, inventory, and daily shop operations.
+</p>
 
-```
+<br>
+
+![HTML](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-22+-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
+</div>
+
+---
+
+## ☕ About The Project
+
+**Brew & Bean** is a full-stack Coffee Management System designed to
+digitally manage the complete workflow of a coffee shop.
+
+The system provides two dedicated experiences:
+
+- 👤 **Customer Portal** — browse the menu, place orders, make reservations,
+  track orders, manage profiles, and contact the shop.
+- 🧑‍💼 **Manager Portal** — manage products, orders, reservations, customers,
+  inventory, messages, reports, and shop settings.
+
+The frontend is connected to a real **Node.js + Express.js REST API**
+with **SQLite** as the database.
+
+---
+
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 👤 Customer Portal
+
+- 📋 Browse & search menu
+- 🛒 Shopping cart
+- 📦 Pickup & delivery orders
+- 📍 Delivery address
+- 🪑 Table reservations
+- 🔐 Registration & login
+- 📊 Order history & tracking
+- 👤 Profile management
+- 💬 Contact & messaging
+- 🔑 Password reset
+
+</td>
+<td width="50%">
+
+### 🧑‍💼 Manager Portal
+
+- 📊 Dashboard & statistics
+- ☕ Product management
+- 📦 Order management
+- 🪑 Reservation management
+- 👥 Customer management
+- 📋 Inventory management
+- ⚠️ Low-stock alerts
+- 💬 Customer messages
+- ⚙️ Shop settings
+- 💰 Tax & delivery settings
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technologies |
+|------|--------------|
+| **Frontend** | HTML5, CSS3, JavaScript |
+| **Backend** | Node.js, Express.js |
+| **Database** | SQLite |
+| **Authentication** | bcrypt + Bearer Tokens |
+| **API** | REST API |
+| **Runtime** | Node.js 22.5+ |
+
+---
+
+## 📁 Project Structure
+
+```text
 Coffee Management System/
+│
 ├── frontend/
-│   ├── customer.html      # Customer portal (menu, cart, orders, reservations, profile)
-│   ├── manager.html       # Manager dashboard (menu, orders, reservations, inventory, messages, reports, settings)
-│   ├── index.html         # Landing page + manager login
+│   ├── index.html
+│   ├── customer.html
+│   ├── manager.html
 │   ├── style.css
 │   ├── videos/
 │   └── uploads/
 │
 ├── backend/
-│   ├── server.js          # Express app + all REST API routes
-│   ├── database.js        # SQLite connection, schema init, minimal seed data
-│   ├── schema.sql          # Table definitions (customers, orders, products, ...)
-│   ├── package.json
-│   └── coffee_shop.db     # Created automatically on first run
+│   ├── server.js
+│   ├── database.js
+│   ├── schema.sql
+│   └── package.json
 │
 └── README.md
 ```
 
-## Running the project
+---
 
-Requires **Node.js 22.5 or newer** (uses Node's built-in `node:sqlite` module,
-so there's nothing to compile — works out of the box on Windows, macOS, and
-Linux with no build tools required).
+## 🚀 Getting Started
+
+### 📋 Requirements
+
+Make sure you have:
+
+- **Node.js 22.5 or newer**
+- **Git**
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/toobahashim5/coffee-management-system.git
+cd coffee-management-system
+```
+
+### 2️⃣ Install Backend Dependencies
 
 ```bash
 cd backend
 npm install
+```
+
+### 3️⃣ Start the Application
+
+```bash
 npm start
 ```
 
-The server starts at **http://localhost:3000** and also serves the frontend,
-so you can just open that URL in your browser — no separate frontend server
-or CORS configuration needed.
+You should see:
 
-You'll see a one-line `ExperimentalWarning: SQLite is an experimental
-feature` in the console when the server starts — that's expected and can be
-ignored; it doesn't affect functionality.
-
-- Customer portal: `http://localhost:3000/index.html` → "Customer Portal"
-- Manager portal: `http://localhost:3000/index.html` → "Manager Portal"
-
-### Default manager login
+```text
+Brew & Bean server running at http://localhost:3000
 ```
+
+### 4️⃣ Open the Application
+
+Open your browser and visit:
+
+**http://localhost:3000**
+
+The complete application runs from this single URL.
+
+---
+
+## 👤 Customer Portal
+
+From the home page, select **Customer Portal** to:
+
+- Browse the coffee menu
+- Search and filter products
+- Add products to the cart
+- Place pickup or delivery orders
+- Make table reservations
+- Create an account
+- Track orders
+- Manage your profile
+- Contact the coffee shop
+
+Customers can create their own account through the registration form.
+
+---
+
+## 🧑‍💼 Manager Portal
+
+From the home page, select **Manager Portal**.
+
+### Demo Login
+
+```text
 Username: admin
 Password: password123
 ```
 
-A customer account is created through the normal Sign Up form on the
-customer portal.
+The manager can manage:
 
-## What's stored in SQLite
+- Products and menu
+- Orders
+- Reservations
+- Customers
+- Inventory
+- Customer messages
+- Dashboard statistics
+- Shop settings
+- Tax and delivery settings
 
-- **customers** — accounts, hashed passwords, loyalty points, running totals
-- **managers** — manager accounts, hashed passwords
-- **categories** / **products** — the menu, editable from the manager dashboard
-- **orders** / **order_items** — every order placed, with backend-calculated
-  totals (the server never trusts a total sent from the browser)
-- **reservations** — table bookings, with manager confirm/cancel workflow
-- **contact_messages** / **message_replies** — the Contact Us form and manager replies
-- **inventory** — stock items with reorder levels and a low-stock endpoint
-- **settings** — shop info and tax/service/delivery-fee configuration
+> ⚠️ Change the default manager password before using the application
+> in a real production environment.
 
-Foreign keys are enabled (`PRAGMA foreign_keys = ON`) and order creation runs
-inside a single SQLite transaction — if anything fails, the whole order is
-rolled back so the database is never left with a partial order.
+---
 
-## Recent improvements
+## 🗄️ Database
 
-On top of the core system, the following were added:
+The application uses **SQLite** to store:
 
-- **Order tracking status bar** — customers see a visual step tracker (Placed → Preparing → Ready/Completed) on each order in their History page.
-- **Order confirmation notification (demo)** — the order confirmation modal shows a simulated "email/SMS sent" banner. No real email/SMS provider is configured for this project; it's a UI demonstration only.
-- **Manager dashboard date-range filter** — Today / This Week / This Month toggle above the stats cards.
-- **Real product image uploads** — images are uploaded via `POST /api/upload/product-image`, saved as real files under `frontend/uploads/products/`, and the file is cleaned up automatically when a product's image is replaced or the product is deleted. (Previously images were stored as base64 text directly in the database.)
-- **Menu price range + sort filter** — a price slider and a sort dropdown (price/name) were added next to the existing category filter and search box on the customer menu page.
-- **Forgot password (demo)** — customers can request a password reset from the login page. Since no email service is configured, the reset code is shown directly in the browser instead of being emailed (clearly labelled as a demo). This is a good next step to wire up to a real email provider (e.g. SendGrid/Nodemailer) for production use.
-- **Real-time new-order alerts** — the manager dashboard polls every 10 seconds; when a new order comes in it shows a toast notification and a badge on the "Order Management" sidebar link (cleared when the manager opens that section).
+- 👥 Customer and manager accounts
+- ☕ Products and categories
+- 🛒 Orders and order items
+- 🪑 Reservations
+- 📦 Inventory
+- 💬 Contact messages and replies
+- ⚙️ Shop settings
 
-## Notes
+The database is initialized automatically when the backend starts.
 
-- Passwords are hashed with bcrypt; they are never returned by the API.
-- Session auth is a simple bearer token issued at login and checked against
-  the `session_token` column — enough for this project without adding a
-  heavier auth framework.
-- The frontend's visual design, layout, and pages are unchanged. Only the
-  JavaScript that used to read/write `localStorage` now calls the API.
+Order creation uses database transactions to help maintain data integrity.
+
+---
+
+## 🔐 Security
+
+- Passwords are hashed using **bcrypt**.
+- Authentication uses bearer session tokens.
+- Order totals are calculated by the backend.
+- SQLite foreign-key constraints are enabled.
+- Protected API routes use authentication middleware.
+
+---
+
+## 📌 Project Highlights
+
+- Full-stack web application
+- Customer and manager portals
+- REST API integration
+- SQLite database
+- Authentication system
+- Complete ordering workflow
+- Reservation management
+- Inventory management
+- Product image uploads
+- Dashboard statistics
+- Customer messaging system
+
+---
+
+## 💻 Run Locally
+
+```text
+Clone Repository
+      ↓
+cd backend
+      ↓
+npm install
+      ↓
+npm start
+      ↓
+http://localhost:3000
+```
+
+---
+
+<div align="center">
+
+### ☕ Brew • Manage • Serve
+
+**Built with passion for coffee and code.**
+
+</div>
