@@ -1,0 +1,16 @@
+{
+  "name": "coffee-management-backend",
+  "version": "1.0.0",
+  "description": "Node.js + Express.js + SQLite backend for Brew & Bean Coffee Management System",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2"
+  }
+}

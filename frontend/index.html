@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brew & Bean - Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8B4513;
+            --secondary-color: #D2691E;
+            --accent-color: #F4A460;
+            --light-color: #FAF3E0;
+            --dark-color: #3E2723;
+            --text-color: #5D4037;
+            --white: #FFFFFF;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background pattern */
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            z-index: -1;
+            background-image: 
+                radial-gradient(var(--primary-color) 2px, transparent 2px),
+                radial-gradient(var(--secondary-color) 2px, transparent 2px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .tagline {
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+
+        /* Updated Video Section */
+        .video-section {
+            width: 100%;
+            max-width: 900px; /* Reduced max-width */
+            margin: 10px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, #8B4513, #D2691E); /* Background for fallback */
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        #portalVideo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Changed from cover to contain */
+            border-radius: 15px;
+            background: linear-gradient(135deg, #8B4513, #D2691E); /* Video background color */
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(62, 39, 35, 0.2), rgba(139, 69, 19, 0.4));
+            border-radius: 15px;
+        }
+
+        .video-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--white);
+            z-index: 2;
+            width: 90%;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .video-content h3 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .video-content p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        /* Video fallback styling */
+        .video-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .video-fallback h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Portal Cards Container */
+        .portals-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            width: 100%;
+        }
+
+        /* Portal Card */
+        .portal-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .portal-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .portal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .customer-portal::before {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .manager-portal::before {
+            background: linear-gradient(90deg, var(--dark-color), var(--primary-color));
+        }
+
+        .portal-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+        }
+
+        .customer-portal .portal-icon {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(244, 164, 96, 0.1));
+            color: var(--primary-color);
+        }
+
+        .manager-portal .portal-icon {
+            background: linear-gradient(135deg, rgba(62, 39, 35, 0.1), rgba(139, 69, 19, 0.1));
+            color: var(--dark-color);
+        }
+
+        .portal-title {
+            font-size: 2rem;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .portal-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+        }
+
+        .portal-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .portal-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .portal-features li i {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .portal-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .customer-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+        }
+
+        .customer-btn:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .manager-btn {
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            color: var(--white);
+        }
+
+        .manager-btn:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(62, 39, 35, 0.3);
+        }
+
+        /* Login Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .login-modal {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border-radius: 50px;
+            border: 2px solid #e0e0e0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f9f9f9;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            color: var(--white);
+            width: 100%;
+            padding: 16px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            transform: translateY(-2px);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #999;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--primary-color);
+            transform: rotate(90deg);
+        }
+
+        .demo-credentials {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .demo-credentials p {
+            margin-bottom: 5px;
+        }
+
+        .demo-credentials code {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .footer p {
+            margin-bottom: 5px;
+        }
+
+        .creator {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .portals-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .logo {
+                font-size: 2.8rem;
+            }
+            
+            .video-content h3 {
+                font-size: 2rem;
+            }
+            
+            .video-content p {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .portal-card {
+                padding: 30px;
+                min-height: 350px;
+            }
+            
+            .portal-title {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                font-size: 2.3rem;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .login-modal {
+                padding: 30px 25px;
+            }
+            
+            .video-content h3 {
+                font-size: 1.8rem;
+            }
+            
+            .video-content p {
+                font-size: 1rem;
+            }
+            
+            .video-section {
+                border-radius: 10px;
+            }
+        }
+
+        /* Animation for card entrance */
+        .portal-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardEntrance 0.6s ease-out forwards;
+        }
+
+        .customer-portal {
+            animation-delay: 0.1s;
+        }
+
+        .manager-portal {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes cardEntrance {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-mug-hot logo-icon"></i>
+                Brew & <span>Bean</span>
+                <i class="fas fa-coffee logo-icon"></i>
+            </div>
+            <p class="tagline">Choose your portal to enter our coffee shop management system</p>
+        </div>
+
+        <!-- Video Section -->
+        <div class="video-section">
+            <div class="video-container">
+                <!-- VIDEO KA PATH YAHAN CHANGE KAREIN -->
+                <video autoplay muted loop id="portalVideo">
+                    <source src="videos/coffee.mp4" type="video/mp4">
+                    <!-- Agar video na chale to fallback message -->
+                    Your browser does not support HTML5 video.
+                </video>
+                <div class="video-overlay"></div>
+                <div class="video-content">
+                    <h3>Welcome to Brew & Bean</h3>
+                    <p>Where every cup tells a story</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portal Cards -->
+        <div class="portals-container">
+            <!-- Customer Portal -->
+            <div class="portal-card customer-portal">
+                <div>
+                    <div class="portal-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    
+                    <h2 class="portal-title">Customer Portal</h2>
+                    
+                    <p class="portal-description">
+                        Order your favorite coffee, book tables, and enjoy our premium services. 
+                        Perfect for coffee lovers who want quick and easy access.
+                    </p>
+                </div>
+                
+                <button class="portal-btn customer-btn" id="customerPortalBtn">
+                    <i class="fas fa-external-link-alt"></i> Enter Customer Portal
+                </button>
+            </div>
+
+            <!-- Manager Portal -->
+            <div class="portal-card manager-portal">
+                <div>
+                    <div class="portal-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    
+                    <h2 class="portal-title">Manager Portal</h2>
+                    
+                    <p class="portal-description">
+                        Control room for managing all coffee shop operations. 
+                        Access analytics, manage orders, and oversee daily business activities.
+                    </p>
+                </div>
+                
+                <button class="portal-btn manager-btn" id="managerPortalBtn">
+                    <i class="fas fa-lock"></i> Access Manager Portal
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Brew & Bean Coffee Shop Management System</p>
+            <p>Designed by <span class="creator">Tooba Hashim</span> 💬 Follow</p>
+        </div>
+    </div>
+
+    <!-- Manager Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="login-modal">
+            <button class="close-modal" id="closeLoginModal">&times;</button>
+            
+            <div class="modal-header">
+                <div class="modal-logo">Brew & Bean</div>
+                <h2 class="modal-title">Manager Login</h2>
+                <p class="modal-subtitle">Enter your credentials to access the manager portal</p>
+            </div>
+            
+            <form id="managerLoginForm">
+                <div class="form-group">
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="managerUsername" class="form-control" placeholder="Username" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="managerPassword" class="form-control" placeholder="Password" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login to Manager Portal
+                </button>
+            </form>
+            
+            <div class="demo-credentials">
+                <p><strong>Demo Credentials (For Testing):</strong></p>
+                <p>Username: <code>admin</code></p>
+                <p>Password: <code>password123</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const customerPortalBtn = document.getElementById('customerPortalBtn');
+        const managerPortalBtn = document.getElementById('managerPortalBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const managerLoginForm = document.getElementById('managerLoginForm');
+        const managerUsername = document.getElementById('managerUsername');
+        const managerPassword = document.getElementById('managerPassword');
+        const portalVideo = document.getElementById('portalVideo');
+        
+        // Auto-fill demo credentials for testing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-fill demo credentials (optional, for easy testing)
+            managerUsername.value = 'admin';
+            managerPassword.value = 'password123';
+            
+            // Video error handling (updated)
+            if (portalVideo) {
+                portalVideo.addEventListener('error', function() {
+                    console.log('Video loading failed. Showing fallback content.');
+                    const videoContainer = document.querySelector('.video-container');
+                    if (videoContainer) {
+                        videoContainer.innerHTML = `
+                            <div class="video-fallback">
+                                <h3>Welcome to Brew & Bean</h3>
+                                <p>Where every cup tells a story</p>
+                                <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                                    <i class="fas fa-video-slash"></i> Video could not load
+                                </p>
+                            </div>
+                        `;
+                    }
+                });
+            }
+        });
+        
+        // Customer Portal - Direct Access (FIXED)
+        customerPortalBtn.addEventListener('click', function() {
+            // Show loading/transition effect
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
+            this.disabled = true;
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                // Redirect to customer website
+                window.location.href = 'customer.html';
+            }, 500);
+        });
+        
+        // Manager Portal - Show Login Modal
+        managerPortalBtn.addEventListener('click', function() {
+            // Pause video when modal opens
+            if (portalVideo) {
+                portalVideo.pause();
+            }
+            loginModal.style.display = 'flex';
+        });
+        
+        // Close Login Modal
+        closeLoginModal.addEventListener('click', function() {
+            loginModal.style.display = 'none';
+            // Resume video when modal closes
+            if (portalVideo) {
+                portalVideo.play();
+            }
+        });
+        
+        // Close modal when clicking outside
+        loginModal.addEventListener('click', function(e) {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+                // Resume video when modal closes
+                if (portalVideo) {
+                    portalVideo.play();
+                }
+            }
+        });
+        
+        // Manager Login Form Submission - now backed by the real /api/manager/login endpoint
+        managerLoginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = managerUsername.value.trim();
+            const password = managerPassword.value.trim();
+            const submitBtn = managerLoginForm.querySelector('.login-btn');
+            
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                submitBtn.disabled = true;
+                
+                const response = await fetch('/api/manager/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Save session token and manager info
+                    localStorage.setItem('managerLoggedIn', 'true');
+                    localStorage.setItem('managerToken', data.token);
+                    localStorage.setItem('managerUsername', data.manager.username);
+                    localStorage.setItem('managerInfo', JSON.stringify(data.manager));
+                    
+                    showNotification('Login successful! Redirecting to Manager Portal...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'manager.html';
+                    }, 1500);
+                } else {
+                    showNotification(data.error || 'Invalid credentials', 'error');
+                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Manager Portal';
+                    submitBtn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server. Please try again.', 'error');
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Manager Portal';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 30px;
+                right: 30px;
+                background: ${type === 'success' ? '#4CAF50' : '#F44336'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 10000;
+                max-width: 350px;
+                animation: slideIn 0.3s ease-out;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            `;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            notification.innerHTML = `
+                <i class="fas ${icon}" style="font-size: 1.2rem;"></i>
+                <div>${message}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 4000);
+            
+            // Add CSS for animations
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key closes modal
+            if (e.key === 'Escape' && loginModal.style.display === 'flex') {
+                loginModal.style.display = 'none';
+                // Resume video when modal closes
+                if (portalVideo) {
+                    portalVideo.play();
+                }
+            }
+            
+            // Ctrl+1 for Customer Portal
+            if (e.ctrlKey && e.key === '1') {
+                e.preventDefault();
+                customerPortalBtn.click();
+            }
+            
+            // Ctrl+2 for Manager Portal
+            if (e.ctrlKey && e.key === '2') {
+                e.preventDefault();
+                managerPortalBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>

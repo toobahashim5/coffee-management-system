@@ -1,0 +1,4359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Portal - Brew & Bean Coffee Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8B4513;
+            --secondary-color: #D2691E;
+            --accent-color: #F4A460;
+            --light-color: #FAF3E0;
+            --dark-color: #2C1810;
+            --text-color: #5D4037;
+            --white: #FFFFFF;
+            --gray-light: #F5F5F5;
+            --gray: #E0E0E0;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --info: #2196F3;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f5f2;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        .header-info h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Main Layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: calc(100vh - 76px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-right: 1px solid var(--gray);
+            padding: 25px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 76px;
+            height: calc(100vh - 76px);
+            overflow-y: auto;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 25px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--gray-light);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(139, 69, 19, 0.1), transparent);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 25px;
+            background-color: #f8f5f2;
+            position: relative;
+            overflow-y: auto;
+            height: calc(100vh - 76px);
+        }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            display: none;
+        }
+        
+        .dashboard-section.active-section {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: var(--transition);
+            border-left: 5px solid transparent;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .section-header h2 {
+            font-size: 1.4rem;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            color: var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #1976d2;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e68a00;
+            transform: translateY(-2px);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th {
+            background: var(--gray-light);
+            padding: 15px 18px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .data-table td {
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--gray);
+            vertical-align: middle;
+        }
+
+        .data-table tr:hover {
+            background: rgba(139, 69, 19, 0.02);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning);
+        }
+
+        .status-processing {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+        }
+
+        .status-completed {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+
+        .status-cancelled {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+        }
+
+        .status-available {
+            background: rgba(139, 69, 19, 0.1);
+            color: #8B4513;
+        }
+
+        .status-unavailable {
+            background: rgba(210, 105, 30, 0.1);
+            color: #D2691E;
+        }
+
+        .status-active {
+            background: rgba(139, 69, 19, 0.1);
+            color: #8B4513;
+        }
+
+        .status-inactive {
+            background: rgba(158, 158, 158, 0.1);
+            color: #757575;
+        }
+
+        .status-low-stock {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning);
+        }
+
+        .status-out-of-stock {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        /* Order Type Badges */
+        .order-type-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .order-type-dinein {
+            background: rgba(139, 69, 19, 0.1);
+            color: #8B4513;
+        }
+
+        .order-type-takeaway {
+            background: rgba(210, 105, 30, 0.1);
+            color: #D2691E;
+        }
+
+        .order-type-delivery {
+            background: rgba(244, 164, 96, 0.1);
+            color: #F4A460;
+        }
+
+        /* Charts - SMALLER SIZE */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .chart-placeholder {
+            height: 280px;
+            background: linear-gradient(180deg, #f8f5f2 0%, #f0ebe6 100%);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #8a7f75;
+            margin-top: 20px;
+        }
+
+        .chart-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            opacity: 0.5;
+        }
+
+        /* Search & Filter - FIXED FOR MENU MANAGEMENT */
+        .search-bar {
+            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 13px 20px 13px 45px;
+            border: 2px solid var(--gray);
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 18px;
+            border: 2px solid var(--gray);
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 25px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .modal-header h3 {
+            font-size: 1.4rem;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #999;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            background: var(--gray-light);
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 18px 25px;
+            border-top: 2px solid var(--gray-light);
+            background: var(--gray-light);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 18px 22px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+            max-width: 350px;
+            border-left: 5px solid #8B4513;
+        }
+
+        .notification.error {
+            border-left-color: #D2691E;
+        }
+
+        .notification.warning {
+            border-left-color: #F4A460;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #8a7f75;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        /* Alert Badge */
+        .alert-badge {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        .alert-badge.warning {
+            background-color: var(--warning);
+        }
+
+        .alert-badge.danger {
+            background-color: var(--danger);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 76px;
+                left: 0;
+                width: 280px;
+                z-index: 100;
+                height: calc(100vh - 76px);
+            }
+            
+            .sidebar.active {
+                display: block;
+            }
+            
+            .menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: white;
+                cursor: pointer;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 15px 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        /* Tabs - FIXED SETTINGS TAB ISSUE */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--gray-light);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-color);
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Menu Image Preview */
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* SMALLER Graph Styles */
+        .real-chart-container {
+            width: 100%;
+            height: 200px; /* Reduced from 300px to 200px */
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .chart-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 1px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chart-bars {
+            position: absolute;
+            bottom: 0;
+            left: 40px;
+            width: calc(100% - 40px);
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 0 20px;
+            z-index: 2;
+        }
+
+        .chart-bar {
+            width: 30px; /* Reduced from 35px */
+            background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+            margin: 0 2px;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px; /* Reduced from 12px */
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px; /* Reduced from 12px */
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .chart-axis-y {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 11px; /* Reduced from 12px */
+            color: #666;
+        }
+
+        .chart-axis-x {
+            position: absolute;
+            bottom: 0;
+            left: 40px;
+            width: calc(100% - 40px);
+            height: 20px;
+        }
+
+        .contact-messages-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .contact-messages-table th {
+            background: var(--gray-light);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .contact-messages-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--gray);
+            vertical-align: top;
+        }
+
+        .contact-messages-table tr:hover {
+            background: rgba(139, 69, 19, 0.02);
+        }
+
+        .message-preview {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .unread-message {
+            background-color: rgba(33, 150, 243, 0.05);
+            font-weight: 600;
+        }
+
+        .message-status {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .status-read {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+
+        .status-unread {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--warning);
+        }
+
+        /* Reply Message Modal Styles - FIXED TEXTAREA */
+        .reply-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            resize: vertical;
+            min-height: 120px; /* Fixed height */
+            box-sizing: border-box; /* Added for proper sizing */
+        }
+
+        .reply-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .previous-replies {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--gray-light);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .reply-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: white;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .reply-meta {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        /* Reports Section Improvements */
+        .reports-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .report-content {
+            min-height: 300px;
+        }
+
+        /* Improved Sales Chart */
+        .sales-chart-improved {
+            width: 100%;
+            height: 300px; /* Reduced from 350px */
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Category Analysis Grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .category-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .category-progress {
+            height: 10px;
+            background: var(--gray-light);
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .category-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        /* Hourly Analysis */
+        .hourly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .hourly-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .hourly-time {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .hourly-sales {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        /* Message Search Box Fix */
+        #messageSearch {
+            margin-bottom: 15px;
+        }
+        /* Receipt Styles */
+        .receipt {
+            width: 420px;
+            max-width: 90%;
+            margin: 12px auto;
+            display: block;
+            font-family: 'Courier New', Courier, monospace;
+            color: #222;
+            font-size: 14px;
+            line-height: 1.4;
+            box-sizing: border-box;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .receipt-header .logo-small {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+
+        .receipt-header .shop-info {
+            font-size: 12px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .receipt-meta {
+            text-align: left;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+
+        .receipt-items > div {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #ddd;
+            font-size: 13px;
+        }
+
+        .receipt-totals {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .receipt-totals > div {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+
+        .receipt-totals .total {
+            font-weight: 700;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 6px;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .dashed {
+            border: none;
+            border-top: 1px dashed #ccc;
+            margin: 8px 0;
+        }
+
+        /* Print: only show modal/receipt */
+        .order-receipt { display: none; }
+        @page { size: A4; margin: 5mm; }
+        @media print {
+            /* hide everything by default */
+            html, body { margin: 0 !important; padding: 0 !important; background: white !important; }
+            body > * { display: none !important; }
+
+            /* show only the order modal */
+            #orderModal { display: flex !important; position: static !important; background: none !important; }
+            #orderModal .modal { width: 100% !important; max-width: 100% !important; max-height: none !important; margin: 0 !important; box-shadow: none !important; overflow: visible !important; }
+            #orderModal .modal-header, #orderModal .modal-footer { display: none !important; }
+            #orderModal .modal-body { padding: 0 !important; }
+
+            /* show only the order-receipt, hide everything else in modal-body */
+            .order-view { display: none !important; }
+            .reply-section { display: none !important; }
+            #replyForm { display: none !important; }
+            .order-receipt { display: block !important; visibility: visible !important; margin: 0 !important; padding: 0 !important; }
+            .order-receipt * { visibility: visible !important; }
+
+            /* compact receipt for printing */
+            .receipt { width: 340px !important; max-width: 94% !important; margin: 0 auto !important; font-size: 9px !important; line-height: 1.05 !important; }
+            .receipt-header .logo-small { font-size: 1rem !important; }
+            .receipt-meta { font-size: 8.5px !important; padding: 2px 0 !important; }
+            .receipt-items > div { padding: 1px 0 !important; }
+            .receipt-totals > div { padding: 1px 0 !important; }
+
+            /* prevent page breaks */
+            .order-receipt, .receipt, .receipt-items, .receipt-totals { page-break-inside: avoid !important; page-break-after: avoid !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle" style="display: none;">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">Brew & <span>Bean</span></div>
+            <div class="header-info">
+                <h1>Manager Portal</h1>
+                <p>Complete control for coffee shop operations</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div>
+                    <div style="font-weight: 600;">Admin User</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Manager</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-section="menu">
+                    <i class="fas fa-utensils"></i> Menu Management
+                </a>
+                <a href="#" class="nav-item" data-section="orders">
+                    <i class="fas fa-shopping-cart"></i> Order Management
+                    <span id="newOrdersBadge" style="display: none; margin-left: auto; background: #E74C3C; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 12px;">0</span>
+                </a>
+                <a href="#" class="nav-item" data-section="reservations">
+                    <i class="fas fa-calendar-check"></i> Reservations
+                </a>
+                <a href="#" class="nav-item" data-section="inventory">
+                    <i class="fas fa-boxes"></i> Inventory
+                </a>
+                <a href="#" class="nav-item" data-section="messages">
+                    <i class="fas fa-envelope"></i> Customer Messages
+                </a>
+                <a href="#" class="nav-item" data-section="reports">
+                    <i class="fas fa-chart-line"></i> Reports
+                </a>
+                <a href="#" class="nav-item" data-section="settings">
+                    <i class="fas fa-cogs"></i> Settings
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="dashboard-section active-section">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                    <h2 style="color: var(--primary-color); margin: 0;" id="dashboardRangeTitle">Today's Overview</h2>
+                    <div class="tabs" style="margin: 0;">
+                        <button class="tab-btn active" data-dashboard-range="today">Today</button>
+                        <button class="tab-btn" data-dashboard-range="week">This Week</button>
+                        <button class="tab-btn" data-dashboard-range="month">This Month</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-left-color: #8B4513;">
+                        <div class="stat-icon" style="background: rgba(139, 69, 19, 0.1); color: #8B4513;">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="todayOrders">0</div>
+                            <div class="stat-label" id="todayOrdersLabel">Today's Orders</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" style="border-left-color: #D2691E;">
+                        <div class="stat-icon" style="background: rgba(210, 105, 30, 0.1); color: #D2691E;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="todayRevenue">Rs. 0</div>
+                            <div class="stat-label" id="todayRevenueLabel">Today's Revenue</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" style="border-left-color: #F4A460;">
+                        <div class="stat-icon" style="background: rgba(244, 164, 96, 0.1); color: #F4A460;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="pendingOrders">0</div>
+                            <div class="stat-label">Pending Orders</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" style="border-left-color: #8B4513;">
+                        <div class="stat-icon" style="background: rgba(139, 69, 19, 0.1); color: #8B4513;">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="activeReservations">0</div>
+                            <div class="stat-label">Active Reservations</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="section-header">
+                        <h2><i class="fas fa-chart-bar"></i> Sales Overview (Last 7 Days)</h2>
+                        <select class="form-control" style="width: auto; padding: 8px 15px;" id="salesPeriod">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                        </select>
+                    </div>
+                    <div class="real-chart-container">
+                        <div class="chart-grid" id="salesChartGrid"></div>
+                        <div class="chart-bars" id="salesChartBars"></div>
+                        <div class="chart-axis-y" id="salesChartAxisY"></div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-exclamation-circle"></i> Quick Alerts</h2>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 15px;" id="quickAlerts">
+                        <!-- Alerts will be loaded by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Management Section -->
+            <div id="menu" class="dashboard-section">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-utensils"></i> Menu Management</h2>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="addMenuItemBtn">
+                                <i class="fas fa-plus"></i> Add Item
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn active" data-category="all">All Items</button>
+                        <button class="tab-btn" data-category="hot-coffee">Hot Coffee</button>
+                        <button class="tab-btn" data-category="cold-coffee">Cold Coffee</button>
+                        <button class="tab-btn" data-category="tea">Tea</button>
+                        <button class="tab-btn" data-category="desserts">Desserts</button>
+                    </div>
+                    
+                    <!-- FIXED: Search bar now properly placed -->
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="menuSearch" placeholder="Search menu items..." onkeyup="searchMenuItems()">
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuTable">
+                            <!-- Menu items loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Order Management Section -->
+            <div id="orders" class="dashboard-section">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-shopping-cart"></i> Order Management</h2>
+                        <div class="action-buttons">
+                            <button class="btn btn-success" id="refreshOrdersBtn">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <button class="filter-btn active" data-status="all">All Orders</button>
+                        <button class="filter-btn" data-status="pending">Pending</button>
+                        <button class="filter-btn" data-status="processing">Processing</button>
+                        <button class="filter-btn" data-status="completed">Completed</button>
+                        <button class="filter-btn" data-status="cancelled">Cancelled</button>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Type</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <!-- Orders loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reservation Management Section -->
+            <div id="reservations" class="dashboard-section">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-calendar-check"></i> Reservation Management</h2>
+                        <div class="action-buttons">
+                            <button class="btn btn-info" id="viewCalendarBtn">
+                                <i class="fas fa-calendar"></i> View Calendar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="reservationSearch" placeholder="Search reservations...">
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Reservation ID</th>
+                                <th>Customer</th>
+                                <th>Date & Time</th>
+                                <th>Table</th>
+                                <th>Guests</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservationsTable">
+                            <!-- Reservations loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Inventory Section -->
+            <div id="inventory" class="dashboard-section">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-boxes"></i> Inventory Management</h2>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="addInventoryBtn">
+                                <i class="fas fa-plus"></i> Add Stock
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="inventorySearch" placeholder="Search inventory...">
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Current Stock</th>
+                                <th>Reorder Level</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <!-- Inventory items loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customer Messages Section - FIXED SEARCH BOX -->
+            <div id="messages" class="dashboard-section">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-envelope"></i> Customer Messages</h2>
+                        <div class="action-buttons">
+                            <button class="btn btn-success" id="markAllReadBtn">
+                                <i class="fas fa-check-double"></i> Mark All as Read
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- FIXED: Search box for messages -->
+                    <div class="search-bar" id="messageSearchContainer">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="messageSearch" placeholder="Search messages by name, email, or subject...">
+                    </div>
+                    
+                    <table class="contact-messages-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTable">
+                            <!-- Messages loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Section - IMPROVED -->
+            <div id="reports" class="dashboard-section">
+                <div class="reports-container">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h2><i class="fas fa-chart-line"></i> Sales Reports & Analytics</h2>
+                            <div class="action-buttons">
+                                <button class="btn btn-info" id="exportPdfBtn">
+                                    <i class="fas fa-file-pdf"></i> Export as PDF
+                                </button>
+                                <button class="btn btn-success" id="exportExcelBtn">
+                                    <i class="fas fa-file-excel"></i> Export as Excel
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="tabs">
+                            <button class="tab-btn active" data-report="sales">Sales Report</button>
+                            <button class="tab-btn" data-report="products">Top Products</button>
+                        </div>
+                        
+                        <div id="salesReport" class="tab-content active">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px;">
+                                <div>
+                                    <h3 style="color: var(--primary-color); margin-bottom: 15px; font-size: 1.1rem;">Daily Sales Summary</h3>
+                                    <div style="background: #f8f5f2; padding: 20px; border-radius: 8px;" id="dailySalesSummary">
+                                        <!-- Daily sales summary will be loaded by JavaScript -->
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 style="color: var(--primary-color); margin-bottom: 15px; font-size: 1.1rem;">Monthly Performance</h3>
+                                    <div style="background: #f8f5f2; padding: 20px; border-radius: 8px;" id="monthlyPerformance">
+                                        <!-- Monthly performance will be loaded by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 25px;">
+                                <h3 style="color: var(--primary-color); margin-bottom: 15px; font-size: 1.1rem;">Top Selling Products (This Month)</h3>
+                                <div class="real-chart-container" style="height: 200px;">
+                                    <div class="chart-grid"></div>
+                                    <div class="chart-bars" id="topProductsChart"></div>
+                                    <div class="chart-axis-y"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="productsReport" class="tab-content">
+                            <div style="margin-top: 20px;">
+                                <h3 style="color: var(--primary-color); margin-bottom: 15px; font-size: 1.1rem;">Top 10 Products</h3>
+                                <div style="background: #f8f5f2; padding: 20px; border-radius: 8px;" id="topProductsList">
+                                    <!-- Top products list will be loaded by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section - FIXED TAB SWITCHING -->
+            <div id="settings" class="dashboard-section">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-cogs"></i> Settings</h2>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn active" data-setting="shop">Shop Settings</button>
+                        <button class="tab-btn" data-setting="profile">Profile</button>
+                        <button class="tab-btn" data-setting="tax">Tax & Charges</button>
+                    </div>
+                    
+                    <!-- Shop Settings Tab - Now shows properly -->
+                    <div id="shopSettings" class="tab-content active" style="max-width: 600px; margin-top: 20px;">
+                        <div class="form-group">
+                            <label>Shop Name</label>
+                            <input type="text" class="form-control" id="shopName" value="Brew & Bean Coffee Shop">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Opening Time</label>
+                                <input type="time" class="form-control" id="openingTime" value="07:00">
+                            </div>
+                            <div class="form-group">
+                                <label>Closing Time</label>
+                                <input type="time" class="form-control" id="closingTime" value="22:00">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Contact Email</label>
+                            <input type="email" class="form-control" id="contactEmail" value="contact@brewandbean.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Contact Phone</label>
+                            <input type="tel" class="form-control" id="contactPhone" value="+92 300 1234567">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Shop Address</label>
+                            <textarea class="form-control" id="shopAddress" rows="3">123 Coffee Street, Downtown, Karachi, Pakistan</textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="margin-top: 20px;" id="saveShopSettings">
+                            <i class="fas fa-save"></i> Save Shop Settings
+                        </button>
+                    </div>
+                    
+                    <!-- Profile Settings Tab -->
+                    <div id="profileSettings" class="tab-content" style="max-width: 600px; margin-top: 20px;">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control" id="managerName" value="Admin User">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" class="form-control" id="managerEmail" value="admin@brewandbean.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="margin-top: 20px;" id="updateProfileBtn">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                    </div>
+                    
+                    <!-- Tax Settings Tab -->
+                    <div id="taxSettings" class="tab-content" style="max-width: 600px; margin-top: 20px;">
+                        <div class="form-group">
+                            <label>Tax Rate (%)</label>
+                            <input type="number" class="form-control" id="taxRate" value="5" min="0" max="20" step="0.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Service Charge (%)</label>
+                            <input type="number" class="form-control" id="serviceCharge" value="10" min="0" max="20" step="0.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Delivery Fee (Rs.)</label>
+                            <input type="number" class="form-control" id="deliveryFee" value="150" min="0" step="50">
+                        </div>
+                        
+                        <button class="btn btn-primary" style="margin-top: 20px;" id="saveTaxSettings">
+                            <i class="fas fa-save"></i> Save Tax Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Menu Item Modal -->
+    <div class="modal-overlay" id="menuModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-utensils"></i> <span id="modalMenuTitle">Add Menu Item</span></h3>
+                <button class="close-modal" id="closeMenuModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="menuItemForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemName">Item Name *</label>
+                            <input type="text" id="itemName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemCategory">Category *</label>
+                            <select id="itemCategory" class="form-control" required>
+                                <option value="">Select Category</option>
+                                <option value="hot-coffee">Hot Coffee</option>
+                                <option value="cold-coffee">Cold Coffee</option>
+                                <option value="tea">Tea</option>
+                                <option value="desserts">Desserts</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemPrice">Price (Rs.) *</label>
+                            <input type="number" id="itemPrice" class="form-control" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemStatus">Status *</label>
+                            <select id="itemStatus" class="form-control" required>
+                                <option value="available">Available</option>
+                                <option value="unavailable">Out of Stock</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemDescription">Description</label>
+                        <textarea id="itemDescription" class="form-control" rows="3" placeholder="Brief description of the item..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemImage">Item Image (Optional)</label>
+                        <input type="file" id="itemImage" class="form-control" accept="image/*">
+                        <div class="image-preview" id="imagePreview">
+                            <i class="fas fa-image"></i>
+                            <span>No image selected</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="deleteMenuItemBtn" style="display: none; margin-right: auto;">Delete Item</button>
+                <button class="btn" id="cancelMenuItemBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveMenuItemBtn">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button class="close-modal" id="closeOrderModal">&times;</button>
+            </div>
+            <div class="modal-body" id="orderDetails">
+                <!-- Order details loaded by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="closeOrderBtn">Close</button>
+                <button class="btn btn-primary" id="printOrderBtn">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <!-- Compact Print button removed per request -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Details Modal - UPDATED WITH REPLY FUNCTIONALITY -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-envelope"></i> Message Details</h3>
+                <button class="close-modal" id="closeMessageModal">&times;</button>
+            </div>
+            <div class="modal-body" id="messageDetails">
+                <!-- Message details loaded by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="closeMessageBtn">Close</button>
+                <button class="btn btn-success" id="replyMessageBtn">
+                    <i class="fas fa-reply"></i> Reply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Message Modal - FIXED TEXTAREA -->
+    <div class="modal-overlay" id="replyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-reply"></i> Reply to Message</h3>
+                <button class="close-modal" id="closeReplyModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="originalMessage"></div>
+                <div class="reply-section">
+                    <h4 style="color: var(--primary-color); margin-bottom: 15px;">Your Reply</h4>
+                    <form id="replyForm">
+                        <div class="form-group">
+                            <textarea id="replyMessage" placeholder="Type your reply here..." required style="width: 100%; padding: 12px; border: 2px solid var(--gray); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; margin-bottom: 10px; resize: vertical; min-height: 120px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Send as</label>
+                            <select id="replyFrom" class="form-control">
+                                <option value="manager">Manager - Admin User</option>
+                                <option value="support">Support Team</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Reply</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reservation Calendar Modal -->
+    <div class="modal-overlay" id="calendarModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar"></i> Reservation Calendar</h3>
+                <button class="close-modal" id="closeCalendarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <button class="btn btn-small" id="calendarPrevBtn"><i class="fas fa-chevron-left"></i></button>
+                    <h4 id="calendarMonthLabel" style="margin: 0; color: var(--primary-color);"></h4>
+                    <button class="btn btn-small" id="calendarNextBtn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div id="calendarGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;"></div>
+                <div id="calendarDayDetails" style="margin-top: 20px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="closeCalendarBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        // All manager data now lives in SQLite and is loaded through the REST API.
+        const API_BASE = '';
+        const managerToken = localStorage.getItem('managerToken');
+
+        // Not logged in? Bounce back to the portal login page.
+        if (!managerToken) {
+            window.location.href = 'index.html';
+        }
+
+        function authHeaders(extra = {}) {
+            const headers = Object.assign({ 'Content-Type': 'application/json' }, extra);
+            if (managerToken) headers['Authorization'] = 'Bearer ' + managerToken;
+            return headers;
+        }
+
+        // In-memory data, populated from the backend on load (see loadAllDataFromServer)
+        let menuItems = [];
+        let orders = [];
+        let reservations = [];
+        let contactMessages = [];
+        let messageReplies = [];
+        let inventory = [];
+
+        // Fetch every data set the dashboard needs from the backend
+        async function loadAllDataFromServer() {
+            try {
+                const [productsRes, ordersRes, reservationsRes, messagesRes, inventoryRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/products`),
+                    fetch(`${API_BASE}/api/orders`, { headers: authHeaders() }),
+                    fetch(`${API_BASE}/api/reservations`, { headers: authHeaders() }),
+                    fetch(`${API_BASE}/api/contact`, { headers: authHeaders() }),
+                    fetch(`${API_BASE}/api/inventory`, { headers: authHeaders() })
+                ]);
+
+                if (productsRes.status === 401 || ordersRes.status === 401) {
+                    // Session expired/invalid - send back to login
+                    localStorage.removeItem('managerToken');
+                    localStorage.removeItem('managerLoggedIn');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                menuItems = await productsRes.json();
+                orders = await ordersRes.json();
+                reservations = await reservationsRes.json();
+
+                const messages = await messagesRes.json();
+                contactMessages = messages.map(({ replies, ...m }) => m);
+                messageReplies = [];
+                messages.forEach(m => (m.replies || []).forEach(r => messageReplies.push(r)));
+
+                inventory = await inventoryRes.json();
+            } catch (err) {
+                console.error('Failed to load data from server:', err);
+                showNotification('Could not load data from the server', 'error');
+            }
+        }
+
+        // DOM Elements
+        const logoutBtn = document.getElementById('logoutBtn');
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.dashboard-section');
+        const menuTable = document.getElementById('menuTable');
+        const ordersTable = document.getElementById('ordersTable');
+        const reservationsTable = document.getElementById('reservationsTable');
+        const messagesTable = document.getElementById('messagesTable');
+        const inventoryTable = document.getElementById('inventoryTable');
+        const menuModal = document.getElementById('menuModal');
+        const orderModal = document.getElementById('orderModal');
+        const messageModal = document.getElementById('messageModal');
+        const replyModal = document.getElementById('replyModal');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const reportTabs = document.querySelectorAll('[data-report]');
+        const settingTabs = document.querySelectorAll('[data-setting]');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const imagePreview = document.getElementById('imagePreview');
+        const itemImageInput = document.getElementById('itemImage');
+        const menuSearch = document.getElementById('menuSearch');
+        const messageSearch = document.getElementById('messageSearch');
+
+        // Current editing item
+        let currentEditingItem = null;
+        let currentEditingOrder = null;
+        let currentEditingMessage = null;
+        let currentReplyingMessage = null;
+        let uploadedImageData = null;
+
+        // Real-time order tracking
+        let lastKnownOrderId = 0;
+        let newOrdersCount = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load all data from the SQLite-backed API
+            await loadAllDataFromServer();
+
+            loadMenuItems('all');
+            loadOrders('all');
+            loadReservations();
+            loadContactMessages();
+            loadInventory();
+            updateDashboardStats();
+            loadQuickAlerts();
+            loadSalesChart();
+            loadTopProductsChart();
+            
+            // Remember the highest order id we've seen so far, so we can detect
+            // genuinely new orders coming in during polling (not just re-fetches).
+            lastKnownOrderId = orders.reduce((max, o) => Math.max(max, o.id), 0);
+            
+            // Initialize tabs
+            initTabs();
+            
+            // Show dashboard
+            showSection('dashboard');
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Set up auto-refresh: poll for new orders/messages every 10 seconds,
+            // regardless of which section is currently open, so the manager gets
+            // a live notification the moment a customer places an order.
+            setInterval(async () => {
+                await checkForNewOrders();
+                
+                if (document.querySelector('#orders.dashboard-section.active-section')) {
+                    loadOrders(getActiveOrderStatusFilter());
+                }
+                if (document.querySelector('#messages.dashboard-section.active-section')) {
+                    await refreshContactMessages();
+                }
+                updateDashboardStats();
+            }, 10000); // Refresh every 10 seconds
+            
+            // Initialize shop settings form
+            await initializeShopSettings();
+            
+            // Setup message search
+            setupMessageSearch();
+        });
+
+        // Poll the backend for orders newer than the last one we've seen. If any
+        // are found, show a live notification and bump the sidebar badge.
+        async function checkForNewOrders() {
+            try {
+                const res = await fetch(`${API_BASE}/api/orders`, { headers: authHeaders() });
+                if (!res.ok) return;
+                const latestOrders = await res.json();
+                
+                const incomingNew = latestOrders.filter(o => o.id > lastKnownOrderId);
+                
+                if (incomingNew.length > 0) {
+                    orders = latestOrders;
+                    lastKnownOrderId = latestOrders.reduce((max, o) => Math.max(max, o.id), lastKnownOrderId);
+                    
+                    // Only badge/notify if the manager isn't already looking at the Orders section
+                    const onOrdersSection = document.querySelector('#orders.dashboard-section.active-section');
+                    if (!onOrdersSection) {
+                        newOrdersCount += incomingNew.length;
+                        updateNewOrdersBadge();
+                    }
+                    
+                    incomingNew.forEach(order => {
+                        showNotification(`New order #${order.id} received from ${order.customerName} — Rs. ${order.total.toFixed(0)}`, 'success');
+                    });
+                } else {
+                    orders = latestOrders;
+                }
+            } catch (err) {
+                console.error('Could not check for new orders:', err);
+            }
+        }
+
+        function updateNewOrdersBadge() {
+            const badge = document.getElementById('newOrdersBadge');
+            if (!badge) return;
+            if (newOrdersCount > 0) {
+                badge.textContent = newOrdersCount > 99 ? '99+' : String(newOrdersCount);
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function getActiveOrderStatusFilter() {
+            const activeBtn = document.querySelector('[data-status].active');
+            return activeBtn ? activeBtn.getAttribute('data-status') : 'all';
+        }
+
+        // Setup message search functionality
+        function setupMessageSearch() {
+            if (messageSearch) {
+                messageSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = messagesTable.querySelectorAll('tr');
+                    
+                    rows.forEach(row => {
+                        if (row.classList.contains('empty-state-row')) return;
+                        
+                        const name = row.cells[1]?.textContent.toLowerCase() || '';
+                        const email = row.cells[2]?.textContent.toLowerCase() || '';
+                        const subject = row.cells[3]?.textContent.toLowerCase() || '';
+                        const message = row.cells[4]?.textContent.toLowerCase() || '';
+                        
+                        if (searchTerm === '' || 
+                            name.includes(searchTerm) || 
+                            email.includes(searchTerm) || 
+                            subject.includes(searchTerm) || 
+                            message.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+        // Initialize shop + tax settings from the backend
+        async function initializeShopSettings() {
+            try {
+                const res = await fetch(`${API_BASE}/api/settings`);
+                if (!res.ok) return;
+                const settings = await res.json();
+
+                const shop = settings.shop || {};
+                if (shop.shopName) document.getElementById('shopName').value = shop.shopName;
+                if (shop.openingTime) document.getElementById('openingTime').value = shop.openingTime;
+                if (shop.closingTime) document.getElementById('closingTime').value = shop.closingTime;
+                if (shop.contactEmail) document.getElementById('contactEmail').value = shop.contactEmail;
+                if (shop.contactPhone) document.getElementById('contactPhone').value = shop.contactPhone;
+                if (shop.shopAddress) document.getElementById('shopAddress').value = shop.shopAddress;
+
+                const tax = settings.tax || {};
+                if (tax.taxRate !== undefined) document.getElementById('taxRate').value = tax.taxRate;
+                if (tax.serviceCharge !== undefined) document.getElementById('serviceCharge').value = tax.serviceCharge;
+                if (tax.deliveryFee !== undefined) document.getElementById('deliveryFee').value = tax.deliveryFee;
+            } catch (err) {
+                console.error('Could not load settings:', err);
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Navigation
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+                    
+                    // Update active nav item
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show selected section
+                    showSection(sectionId);
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth <= 1200) {
+                        sidebar.classList.remove('active');
+                    }
+                    
+                    // Refresh data when switching to certain sections
+                    if (sectionId === 'dashboard') {
+                        updateDashboardStats();
+                        loadQuickAlerts();
+                        loadSalesChart();
+                    } else if (sectionId === 'orders') {
+                        loadOrders('all');
+                        newOrdersCount = 0;
+                        updateNewOrdersBadge();
+                    } else if (sectionId === 'reservations') {
+                        loadReservations();
+                    } else if (sectionId === 'messages') {
+                        loadContactMessages();
+                    } else if (sectionId === 'reports') {
+                        loadSalesReport();
+                        loadTopProductsChart();
+                    } else if (sectionId === 'settings') {
+                        // FIXED: Ensure shop settings shows by default
+                        document.querySelectorAll('[data-setting]').forEach(tab => tab.classList.remove('active'));
+                        document.querySelector('[data-setting="shop"]').classList.add('active');
+                        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                        document.getElementById('shopSettings').classList.add('active');
+                        initializeShopSettings();
+                    }
+                });
+            });
+
+            // Menu toggle for mobile
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+
+            // Logout
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    fetch(`${API_BASE}/api/manager/logout`, { method: 'POST', headers: authHeaders() })
+                        .catch(err => console.error('Logout request failed:', err));
+                    localStorage.removeItem('managerToken');
+                    localStorage.removeItem('managerLoggedIn');
+                    localStorage.removeItem('managerUsername');
+                    localStorage.removeItem('managerInfo');
+                    showNotification('Logged out successfully', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
+            });
+
+            // Image upload handling - FIXED: Now properly saves image data
+            if (itemImageInput) {
+                itemImageInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                            uploadedImageData = e.target.result; // Store image data
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.innerHTML = '<i class="fas fa-image"></i><span>No image selected</span>';
+                        uploadedImageData = null;
+                    }
+                });
+            }
+            
+            // Sales period change
+            document.getElementById('salesPeriod')?.addEventListener('change', function() {
+                updateDashboardStats();
+                loadSalesChart();
+            });
+            
+            // Save settings buttons
+            document.getElementById('saveShopSettings')?.addEventListener('click', saveShopSettings);
+            document.getElementById('updateProfileBtn')?.addEventListener('click', updateProfile);
+            document.getElementById('saveTaxSettings')?.addEventListener('click', saveTaxSettings);
+            
+            // Mark all messages as read
+            document.getElementById('markAllReadBtn')?.addEventListener('click', markAllMessagesAsRead);
+            
+            // Reply message functionality
+            document.getElementById('replyMessageBtn')?.addEventListener('click', openReplyModal);
+            document.getElementById('closeReplyModal')?.addEventListener('click', closeReplyModal);
+            document.getElementById('replyForm')?.addEventListener('submit', sendReply);
+            
+            // Reservation calendar
+            document.getElementById('viewCalendarBtn')?.addEventListener('click', openReservationCalendar);
+            document.getElementById('closeCalendarModal')?.addEventListener('click', closeCalendarModal);
+            document.getElementById('closeCalendarBtn')?.addEventListener('click', closeCalendarModal);
+            document.getElementById('calendarPrevBtn')?.addEventListener('click', function() {
+                calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+                renderReservationCalendar();
+            });
+            document.getElementById('calendarNextBtn')?.addEventListener('click', function() {
+                calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+                renderReservationCalendar();
+            });
+            
+            // Report exports
+            document.getElementById('exportPdfBtn')?.addEventListener('click', exportReportAsPdf);
+            document.getElementById('exportExcelBtn')?.addEventListener('click', exportReportAsExcel);
+            
+            // Dashboard date-range filter
+            document.querySelectorAll('[data-dashboard-range]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('[data-dashboard-range]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    dashboardRange = this.getAttribute('data-dashboard-range');
+                    updateDashboardStats();
+                    loadSalesChart();
+                });
+            });
+        }
+
+        // ---------------------------------------------------------------
+        // Reservation Calendar
+        // ---------------------------------------------------------------
+        let calendarViewDate = new Date();
+
+        function openReservationCalendar() {
+            calendarViewDate = new Date();
+            renderReservationCalendar();
+            document.getElementById('calendarModal').classList.add('active');
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.remove('active');
+        }
+
+        function renderReservationCalendar() {
+            const year = calendarViewDate.getFullYear();
+            const month = calendarViewDate.getMonth();
+
+            document.getElementById('calendarMonthLabel').textContent =
+                calendarViewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            // Group active reservations by date (YYYY-MM-DD)
+            const reservationsByDate = {};
+            reservations.forEach(r => {
+                if (r.status === 'cancelled') return;
+                const dateKey = (r.date || '').slice(0, 10);
+                if (!reservationsByDate[dateKey]) reservationsByDate[dateKey] = [];
+                reservationsByDate[dateKey].push(r);
+            });
+
+            const firstDay = new Date(year, month, 1);
+            const startWeekday = firstDay.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const todayKey = new Date().toISOString().slice(0, 10);
+
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
+                const head = document.createElement('div');
+                head.style.cssText = 'font-weight: 600; color: var(--primary-color); padding: 6px 0; font-size: 0.85rem;';
+                head.textContent = d;
+                grid.appendChild(head);
+            });
+
+            for (let i = 0; i < startWeekday; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayReservations = reservationsByDate[dateKey] || [];
+                const cell = document.createElement('div');
+                const isToday = dateKey === todayKey;
+                cell.style.cssText = `
+                    padding: 10px 4px; border-radius: 8px; cursor: pointer; min-height: 50px;
+                    background: ${dayReservations.length > 0 ? '#FFF3E0' : '#FAFAFA'};
+                    border: 2px solid ${isToday ? 'var(--primary-color)' : 'transparent'};
+                `;
+                cell.innerHTML = `
+                    <div style="font-weight: 600;">${day}</div>
+                    ${dayReservations.length > 0 ? `<div style="font-size: 0.75rem; color: var(--accent-color); font-weight: 600;">${dayReservations.length} booking${dayReservations.length > 1 ? 's' : ''}</div>` : ''}
+                `;
+                cell.addEventListener('click', () => showCalendarDayDetails(dateKey, dayReservations));
+                grid.appendChild(cell);
+            }
+
+            // Auto-show today's details (or an empty prompt) when the calendar opens
+            showCalendarDayDetails(todayKey, reservationsByDate[todayKey] || []);
+        }
+
+        function showCalendarDayDetails(dateKey, dayReservations) {
+            const container = document.getElementById('calendarDayDetails');
+            const formattedDate = new Date(dateKey + 'T00:00:00').toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            if (dayReservations.length === 0) {
+                container.innerHTML = `
+                    <h4 style="color: var(--primary-color);">${formattedDate}</h4>
+                    <p style="color: #666;">No reservations for this day.</p>
+                `;
+                return;
+            }
+
+            dayReservations.sort((a, b) => a.time.localeCompare(b.time));
+            container.innerHTML = `
+                <h4 style="color: var(--primary-color); margin-bottom: 10px;">${formattedDate}</h4>
+                ${dayReservations.map(r => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--gray);">
+                        <div>
+                            <strong>${r.time}</strong> — ${r.customerName} (${r.guests} people, ${r.table || 'No table'})
+                        </div>
+                        <span class="status-badge status-${r.status}">${r.status.charAt(0).toUpperCase() + r.status.slice(1)}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Initialize tabs - FIXED SETTINGS TAB ISSUE
+        function initTabs() {
+            // Menu category tabs
+            document.querySelectorAll('[data-category]').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    
+                    // Update active tab
+                    document.querySelectorAll('[data-category]').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Load menu items for category
+                    loadMenuItems(category);
+                });
+            });
+            
+            // Report tabs
+            reportTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const reportType = this.getAttribute('data-report');
+                    
+                    // Update active tab
+                    reportTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${reportType}Report`).classList.add('active');
+                    
+                    // Load report data
+                    if (reportType === 'sales') {
+                        loadSalesReport();
+                        loadSalesChart();
+                    } else if (reportType === 'products') {
+                        loadProductsReport();
+                        loadTopProductsChart();
+                    }
+                });
+            });
+            
+            // Settings tabs - FIXED: Now properly shows shop settings first
+            settingTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const settingType = this.getAttribute('data-setting');
+                    
+                    // Update active tab
+                    settingTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${settingType}Settings`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Initialize shop settings as active
+            document.querySelector('[data-setting="shop"]').classList.add('active');
+            document.getElementById('shopSettings').classList.add('active');
+        }
+
+        // Show section
+        function showSection(sectionId) {
+            sections.forEach(section => {
+                section.classList.remove('active-section');
+            });
+            
+            document.getElementById(sectionId).classList.add('active-section');
+        }
+
+        // FIXED: Search menu items function
+        window.searchMenuItems = function() {
+            const searchTerm = menuSearch.value.toLowerCase();
+            const activeCategory = document.querySelector('.tab-btn[data-category].active')?.getAttribute('data-category') || 'all';
+            
+            let filteredItems = menuItems;
+            
+            // Filter by category first
+            if (activeCategory !== 'all') {
+                filteredItems = menuItems.filter(item => item.category === activeCategory);
+            }
+            
+            // Then filter by search term
+            if (searchTerm) {
+                filteredItems = filteredItems.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) || 
+                    (item.description && item.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Update table
+            updateMenuTable(filteredItems);
+        }
+
+        // Update menu table with filtered items
+        function updateMenuTable(items) {
+            menuTable.innerHTML = '';
+            
+            if (items.length === 0) {
+                menuTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">
+                            <div class="empty-state">
+                                <i class="fas fa-utensils"></i>
+                                <h3>No menu items found</h3>
+                                <p>Try a different search term or category</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                            ${item.name}
+                            ${item.bestSeller ? '<span style="color: #FFD700; font-size: 0.8rem;">★</span>' : ''}
+                            ${item.status === 'unavailable' ? '<span class="alert-badge danger"></span>' : ''}
+                        </div>
+                        <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">${item.description || 'No description'}</div>
+                        ${item.image ? '<div style="font-size: 0.8rem; color: #4CAF50; margin-top: 5px;"><i class="fas fa-image"></i> Image uploaded</div>' : ''}
+                    </td>
+                    <td>${formatCategory(item.category)}</td>
+                    <td><strong>Rs. ${item.price}</strong></td>
+                    <td>
+                        <span class="status-badge status-${item.status}">
+                            ${item.status === 'available' ? 'Available' : 'Out of Stock'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-small btn-primary" onclick="editMenuItem(${item.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-small btn-danger" onclick="deleteMenuItem(${item.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                menuTable.appendChild(row);
+            });
+        }
+
+        // Update dashboard stats
+        // Currently selected dashboard range: 'today' | 'week' | 'month'
+        let dashboardRange = 'today';
+
+        // Returns the start Date for the given range (inclusive), truncated to midnight
+        function getRangeStartDate(range) {
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            if (range === 'week') {
+                start.setDate(start.getDate() - 6); // last 7 days including today
+            } else if (range === 'month') {
+                start.setDate(start.getDate() - 29); // last 30 days including today
+            }
+            return start;
+        }
+
+        function updateDashboardStats() {
+            const rangeStart = getRangeStartDate(dashboardRange);
+            
+            // Orders within the selected range
+            const rangeOrders = orders.filter(order => new Date(order.date) >= rangeStart);
+            
+            // Calculate pending orders (not range-limited - always current backlog)
+            const pendingOrders = orders.filter(order => order.status === 'pending');
+            
+            // Calculate revenue for the selected range
+            const rangeRevenue = rangeOrders.reduce((sum, order) => sum + order.total, 0);
+            
+            // Calculate active reservations (today and future)
+            const activeReservations = reservations.filter(reservation => {
+                const reservationDate = new Date(reservation.date);
+                const todayDate = new Date();
+                return reservationDate >= todayDate && reservation.status !== 'cancelled';
+            });
+            
+            const rangeLabels = { today: "Today's", week: "This Week's", month: "This Month's" };
+            const label = rangeLabels[dashboardRange] || "Today's";
+            
+            // Update stats
+            document.getElementById('todayOrders').textContent = rangeOrders.length;
+            document.getElementById('todayRevenue').textContent = `Rs. ${rangeRevenue.toFixed(0)}`;
+            document.getElementById('pendingOrders').textContent = pendingOrders.length;
+            document.getElementById('activeReservations').textContent = activeReservations.length;
+            document.getElementById('todayOrdersLabel').textContent = `${label} Orders`;
+            document.getElementById('todayRevenueLabel').textContent = `${label} Revenue`;
+            
+            const titles = { today: "Today's Overview", week: "This Week's Overview", month: "This Month's Overview" };
+            const titleEl = document.getElementById('dashboardRangeTitle');
+            if (titleEl) titleEl.textContent = titles[dashboardRange] || "Today's Overview";
+        }
+
+        // Load quick alerts
+        function loadQuickAlerts() {
+            const quickAlertsContainer = document.getElementById('quickAlerts');
+            if (!quickAlertsContainer) return;
+            
+            quickAlertsContainer.innerHTML = '';
+            
+            // Check for pending orders
+            const pendingOrders = orders.filter(order => order.status === 'pending');
+            if (pendingOrders.length > 0) {
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 15px; background: #FFF8E1; border-radius: 8px; border-left: 4px solid #FFA000;';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle" style="color: #FFA000; font-size: 1.5rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: #5D4037;">Pending Orders Alert</div>
+                        <div style="color: #666; font-size: 0.9rem;">You have ${pendingOrders.length} pending orders that need attention</div>
+                    </div>
+                `;
+                quickAlertsContainer.appendChild(alertDiv);
+            }
+            
+            // Check for low inventory
+            const lowInventory = inventory.filter(item => item.stock <= item.reorder);
+            if (lowInventory.length > 0) {
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 15px; background: #FFEBEE; border-radius: 8px; border-left: 4px solid #F44336;';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #F44336; font-size: 1.5rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: #5D4037;">Low Inventory Alert</div>
+                        <div style="color: #666; font-size: 0.9rem;">${lowInventory.length} items are running low on stock</div>
+                    </div>
+                `;
+                quickAlertsContainer.appendChild(alertDiv);
+            }
+            
+            // Check for today's reservations
+            const today = new Date().toISOString().split('T')[0];
+            const todayReservations = reservations.filter(reservation => 
+                reservation.date === today && reservation.status !== 'cancelled'
+            );
+            if (todayReservations.length > 0) {
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 15px; background: #E8F5E9; border-radius: 8px; border-left: 4px solid #4CAF50;';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-calendar-check" style="color: #4CAF50; font-size: 1.5rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: #5D4037;">Today's Reservations</div>
+                        <div style="color: #666; font-size: 0.9rem;">You have ${todayReservations.length} reservations scheduled for today</div>
+                    </div>
+                `;
+                quickAlertsContainer.appendChild(alertDiv);
+            }
+            
+            // Check for unread messages
+            const unreadMessages = contactMessages.filter(msg => msg.status === 'unread');
+            if (unreadMessages.length > 0) {
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 15px; background: #E3F2FD; border-radius: 8px; border-left: 4px solid #2196F3;';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-envelope" style="color: #2196F3; font-size: 1.5rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: #5D4037;">New Messages</div>
+                        <div style="color: #666; font-size: 0.9rem;">You have ${unreadMessages.length} unread customer messages</div>
+                    </div>
+                `;
+                quickAlertsContainer.appendChild(alertDiv);
+            }
+            
+            // If no alerts, show a positive message
+            if (quickAlertsContainer.children.length === 0) {
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 15px; background: #E8F5E9; border-radius: 8px; border-left: 4px solid #4CAF50;';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 1.5rem;"></i>
+                    <div>
+                        <div style="font-weight: 600; color: #5D4037;">All Systems Operational</div>
+                        <div style="color: #666; font-size: 0.9rem;">No critical alerts at this time</div>
+                    </div>
+                `;
+                quickAlertsContainer.appendChild(alertDiv);
+            }
+        }
+
+        // SMALLER: Load sales chart with better visualization
+        function loadSalesChart() {
+            const salesChartBars = document.getElementById('salesChartBars');
+            const salesChartGrid = document.getElementById('salesChartGrid');
+            const salesChartAxisY = document.getElementById('salesChartAxisY');
+            
+            if (!salesChartBars || !salesChartGrid || !salesChartAxisY) return;
+            
+            // Clear previous chart
+            salesChartBars.innerHTML = '';
+            salesChartGrid.innerHTML = '';
+            salesChartAxisY.innerHTML = '';
+            
+            // Get period from select
+            const period = parseInt(document.getElementById('salesPeriod').value);
+            
+            // Generate data for the period
+            const dailyData = [];
+            const today = new Date();
+            
+            for (let i = period - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                
+                // Format date for display
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // Calculate revenue for this day (realistic data)
+                const dayOrders = orders.filter(order => {
+                    const orderDate = new Date(order.date).toISOString().split('T')[0];
+                    return orderDate === dateStr;
+                });
+                
+                let revenue = dayOrders.reduce((sum, order) => sum + order.total, 0);
+                
+                // If no orders, generate realistic random data
+                if (revenue === 0 && period === 7) {
+                    // Generate realistic revenue pattern for demo
+                    const baseRevenue = 5000;
+                    const dayFactor = [0.8, 0.9, 1.2, 1.1, 1.4, 1.6, 1.3]; // Week pattern
+                    const index = (period - 1 - i) % 7;
+                    revenue = Math.floor(baseRevenue * dayFactor[index] + Math.random() * 1000);
+                }
+                
+                dailyData.push({
+                    date: dateStr,
+                    day: dayName,
+                    revenue: revenue
+                });
+            }
+            
+            // Find max revenue for scaling
+            const maxRevenue = Math.max(...dailyData.map(d => d.revenue), 1000);
+            
+            // Create grid with better styling
+            for (let row = 0; row < 10; row++) {
+                for (let col = 0; col < 12; col++) {
+                    const gridCell = document.createElement('div');
+                    gridCell.style.backgroundColor = col % 2 === 0 ? '#f8f8f8' : '#f0f0f0';
+                    gridCell.style.border = '1px solid #e0e0e0';
+                    salesChartGrid.appendChild(gridCell);
+                }
+            }
+            
+            // Create Y-axis labels
+            const ySteps = 5;
+            for (let i = ySteps; i >= 0; i--) {
+                const yLabel = document.createElement('div');
+                const value = Math.floor((i / ySteps) * maxRevenue);
+                yLabel.textContent = `Rs. ${value.toLocaleString()}`;
+                yLabel.style.fontSize = '10px'; /* Smaller font */
+                yLabel.style.color = '#666';
+                yLabel.style.padding = '2px 5px';
+                salesChartAxisY.appendChild(yLabel);
+            }
+            
+            // Create bars with improved styling
+            dailyData.forEach((data, index) => {
+                const barHeight = (data.revenue / maxRevenue) * 100;
+                
+                const barContainer = document.createElement('div');
+                barContainer.style.display = 'flex';
+                barContainer.style.flexDirection = 'column';
+                barContainer.style.alignItems = 'center';
+                barContainer.style.justifyContent = 'flex-end';
+                barContainer.style.height = '100%';
+                
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${barHeight}%`;
+                bar.style.minHeight = '10px';
+                bar.style.width = '30px'; /* Smaller width */
+                bar.style.background = `linear-gradient(to top, var(--primary-color), var(--secondary-color))`;
+                bar.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                bar.title = `${data.day}: Rs. ${data.revenue.toLocaleString()}`;
+                bar.style.cursor = 'pointer';
+                
+                // Add hover effect
+                bar.addEventListener('mouseenter', function() {
+                    this.style.opacity = '0.9';
+                    this.style.transform = 'scale(1.05)';
+                });
+                
+                bar.addEventListener('mouseleave', function() {
+                    this.style.opacity = '1';
+                    this.style.transform = 'scale(1)';
+                });
+                
+                const barValue = document.createElement('div');
+                barValue.className = 'chart-bar-value';
+                barValue.textContent = `Rs. ${data.revenue.toLocaleString()}`;
+                barValue.style.fontWeight = '600';
+                barValue.style.fontSize = '9px'; /* Smaller font */
+                
+                const barLabel = document.createElement('div');
+                barLabel.className = 'chart-bar-label';
+                barLabel.textContent = data.day;
+                barLabel.style.fontWeight = '500';
+                barLabel.style.fontSize = '10px'; /* Smaller font */
+                
+                barContainer.appendChild(barValue);
+                barContainer.appendChild(bar);
+                barContainer.appendChild(barLabel);
+                salesChartBars.appendChild(barContainer);
+            });
+        }
+
+        // Load top products chart
+        function loadTopProductsChart() {
+            const topProductsChart = document.getElementById('topProductsChart');
+            if (!topProductsChart) return;
+            
+            // Clear previous chart
+            topProductsChart.innerHTML = '';
+            
+            // Calculate product sales from orders
+            const productSales = {};
+            orders.forEach(order => {
+                if (Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        if (!productSales[item.name]) {
+                            productSales[item.name] = 0;
+                        }
+                        productSales[item.name] += item.quantity;
+                    });
+                }
+            });
+            
+            // Get top 5 products
+            const topProducts = Object.entries(productSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            if (topProducts.length === 0) {
+                topProductsChart.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;">No sales data available</div>';
+                return;
+            }
+            
+            // Find max quantity for scaling
+            const maxQuantity = Math.max(...topProducts.map(p => p[1]), 10);
+            
+            // Create bars for top products
+            topProducts.forEach(([productName, quantity]) => {
+                const barHeight = (quantity / maxQuantity) * 100;
+                const shortName = productName.length > 8 ? productName.substring(0, 8) + '...' : productName;
+                
+                const barContainer = document.createElement('div');
+                barContainer.style.display = 'flex';
+                barContainer.style.flexDirection = 'column';
+                barContainer.style.alignItems = 'center';
+                barContainer.style.justifyContent = 'flex-end';
+                barContainer.style.height = '100%';
+                
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${barHeight}%`;
+                bar.style.minHeight = '10px';
+                bar.style.width = '35px'; /* Smaller width */
+                bar.style.background = 'linear-gradient(to top, var(--secondary-color), var(--accent-color))';
+                bar.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                bar.title = `${productName}: ${quantity} sold`;
+                bar.style.cursor = 'pointer';
+                
+                // Add hover effect
+                bar.addEventListener('mouseenter', function() {
+                    this.style.opacity = '0.9';
+                    this.style.transform = 'scale(1.05)';
+                });
+                
+                bar.addEventListener('mouseleave', function() {
+                    this.style.opacity = '1';
+                    this.style.transform = 'scale(1)';
+                });
+                
+                const barValue = document.createElement('div');
+                barValue.className = 'chart-bar-value';
+                barValue.textContent = quantity;
+                barValue.style.fontWeight = '600';
+                barValue.style.fontSize = '9px'; /* Smaller font */
+                
+                const barLabel = document.createElement('div');
+                barLabel.className = 'chart-bar-label';
+                barLabel.textContent = shortName;
+                barLabel.style.fontSize = '9px'; /* Smaller font */
+                barLabel.style.fontWeight = '500';
+                
+                barContainer.appendChild(barValue);
+                barContainer.appendChild(bar);
+                barContainer.appendChild(barLabel);
+                topProductsChart.appendChild(barContainer);
+            });
+        }
+
+        // Load menu items - FIXED: Now includes image preview in table
+        function loadMenuItems(category = 'all') {
+            let filteredItems = menuItems;
+            if (category !== 'all') {
+                filteredItems = menuItems.filter(item => item.category === category);
+            }
+            
+            updateMenuTable(filteredItems);
+        }
+
+        // Format category
+        function formatCategory(category) {
+            const categories = {
+                'hot-coffee': 'Hot Coffee',
+                'cold-coffee': 'Cold Coffee',
+                'tea': 'Tea',
+                'desserts': 'Desserts'
+            };
+            return categories[category] || category;
+        }
+
+        // Format order type
+        function formatOrderType(type) {
+            const types = {
+                'pickup': 'Pickup',
+                'delivery': 'Delivery',
+                'dinein': 'Dine-in'
+            };
+            return types[type] || type;
+        }
+
+        // Fetch the latest orders from the backend
+        async function refreshOrders(status = 'all') {
+            try {
+                const url = status && status !== 'all'
+                    ? `${API_BASE}/api/orders?status=${encodeURIComponent(status)}`
+                    : `${API_BASE}/api/orders`;
+                const res = await fetch(url, { headers: authHeaders() });
+                if (res.ok) {
+                    orders = await res.json();
+                }
+            } catch (err) {
+                console.error('Could not refresh orders:', err);
+            }
+            loadOrders(status);
+        }
+
+        // Load orders - LATEST ORDERS FIRST (renders the in-memory `orders` array)
+        function loadOrders(status = 'all') {
+            ordersTable.innerHTML = '';
+            
+            let filteredOrders = orders;
+            if (status !== 'all') {
+                filteredOrders = orders.filter(order => order.status === status);
+            }
+            
+            // Sort by date (newest first - LATEST ORDERS AT TOP)
+            filteredOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (filteredOrders.length === 0) {
+                ordersTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <div class="empty-state">
+                                <i class="fas fa-shopping-bag"></i>
+                                <h3>No orders found</h3>
+                                <p>No orders found for the selected filter</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredOrders.forEach(order => {
+                const row = document.createElement('tr');
+                const orderDate = new Date(order.date);
+                const formattedDate = orderDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                const statusText = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+                const orderType = formatOrderType(order.orderType);
+                const orderTypeClass = `order-type-${order.orderType}`;
+                
+                row.innerHTML = `
+                    <td>#${order.id}</td>
+                    <td>
+                        <div>${order.customerName}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${order.customerPhone}</div>
+                    </td>
+                    <td>
+                        <span class="order-type-badge ${orderTypeClass}">${orderType}</span>
+                    </td>
+                    <td><strong>Rs. ${order.total.toFixed(0)}</strong></td>
+                    <td>
+                        <span class="status-badge status-${order.status}">${statusText}</span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            ${order.status === 'pending' ? `
+                                <button class="btn-small btn-success" onclick="updateOrderStatus(${order.id}, 'processing')">
+                                    <i class="fas fa-play"></i> Start
+                                </button>
+                            ` : ''}
+                            ${order.status === 'processing' ? `
+                                <button class="btn-small btn-success" onclick="updateOrderStatus(${order.id}, 'completed')">
+                                    <i class="fas fa-check"></i> Complete
+                                </button>
+                            ` : ''}
+                            <button class="btn-small btn-info" onclick="viewOrderDetails(${order.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                ordersTable.appendChild(row);
+            });
+            
+            // Update dashboard stats
+            updateDashboardStats();
+        }
+
+        // Fetch the latest reservations from the backend
+        async function refreshReservations() {
+            try {
+                const res = await fetch(`${API_BASE}/api/reservations`, { headers: authHeaders() });
+                if (res.ok) reservations = await res.json();
+            } catch (err) {
+                console.error('Could not refresh reservations:', err);
+            }
+            loadReservations();
+        }
+
+        // Load reservations (renders the in-memory `reservations` array)
+        function loadReservations() {
+            reservationsTable.innerHTML = '';
+            
+            if (reservations.length === 0) {
+                reservationsTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <div class="empty-state">
+                                <i class="fas fa-calendar"></i>
+                                <h3>No reservations found</h3>
+                                <p>No upcoming reservations</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Sort by date (soonest first)
+            reservations.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            reservations.forEach(reservation => {
+                const row = document.createElement('tr');
+                const statusText = reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1);
+                
+                row.innerHTML = `
+                    <td>#${reservation.id}</td>
+                    <td>
+                        <div>${reservation.customerName}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${reservation.customerPhone}</div>
+                    </td>
+                    <td>${reservation.date} at ${reservation.time}</td>
+                    <td>${reservation.table}</td>
+                    <td>${reservation.guests} people</td>
+                    <td>
+                        <span class="status-badge status-${reservation.status}">${statusText}</span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            ${reservation.status === 'pending' ? `
+                                <button class="btn-small btn-success" onclick="confirmReservation(${reservation.id})">
+                                    <i class="fas fa-check"></i> Confirm
+                                </button>
+                            ` : ''}
+                            <button class="btn-small btn-danger" onclick="cancelReservation(${reservation.id})">
+                                <i class="fas fa-times"></i> ${reservation.status === 'cancelled' ? 'Remove' : 'Cancel'}
+                            </button>
+                        </div>
+                    </td>
+                `;
+                reservationsTable.appendChild(row);
+            });
+        }
+
+        // Fetch the latest contact messages (with replies) from the backend
+        async function refreshContactMessages() {
+            try {
+                const res = await fetch(`${API_BASE}/api/contact`, { headers: authHeaders() });
+                if (res.ok) {
+                    const messages = await res.json();
+                    contactMessages = messages.map(({ replies, ...m }) => m);
+                    messageReplies = [];
+                    messages.forEach(m => (m.replies || []).forEach(r => messageReplies.push(r)));
+                }
+            } catch (err) {
+                console.error('Could not refresh messages:', err);
+            }
+            loadContactMessages();
+        }
+
+        // Load contact messages - WITH SEARCH FUNCTIONALITY (renders in-memory arrays)
+        function loadContactMessages() {
+            messagesTable.innerHTML = '';
+            
+            if (contactMessages.length === 0) {
+                messagesTable.innerHTML = `
+                    <tr class="empty-state-row">
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <div class="empty-state">
+                                <i class="fas fa-envelope"></i>
+                                <h3>No messages found</h3>
+                                <p>No customer messages received yet</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Sort by date (newest first)
+            contactMessages.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            contactMessages.forEach(message => {
+                const row = document.createElement('tr');
+                row.className = message.status === 'unread' ? 'unread-message' : '';
+                
+                const messageDate = new Date(message.date);
+                const formattedDate = messageDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // Check if there are replies
+                const hasReplies = messageReplies.some(reply => reply.messageId === message.id);
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${message.name}</td>
+                    <td>${message.email}</td>
+                    <td>${message.subject}</td>
+                    <td class="message-preview" title="${message.message}">
+                        ${message.message.substring(0, 50)}${message.message.length > 50 ? '...' : ''}
+                        ${hasReplies ? ' <i class="fas fa-reply" style="color: var(--success);"></i>' : ''}
+                    </td>
+                    <td>
+                        <span class="message-status status-${message.status}">
+                            ${message.status === 'unread' ? 'Unread' : 'Read'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-small btn-info" onclick="viewMessageDetails(${message.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn-small btn-danger" onclick="deleteMessage(${message.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                messagesTable.appendChild(row);
+            });
+        }
+
+        // Load inventory
+        function loadInventory() {
+            inventoryTable.innerHTML = '';
+            
+            inventory.forEach(item => {
+                let status, statusClass;
+                if (item.stock <= 0) {
+                    status = "Out of Stock";
+                    statusClass = "status-out-of-stock";
+                } else if (item.stock <= item.reorder) {
+                    status = "Low Stock";
+                    statusClass = "status-low-stock";
+                } else {
+                    status = "In Stock";
+                    statusClass = "status-available";
+                }
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight: 600;">${item.name}</div>
+                        ${item.supplier ? `<div style="font-size: 0.85rem; color: #666;">Supplier: ${item.supplier}</div>` : ''}
+                    </td>
+                    <td>${item.category}</td>
+                    <td>${item.stock} ${item.unit}</td>
+                    <td>${item.reorder} ${item.unit}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">
+                            ${status}
+                            ${item.stock <= item.reorder ? '<span class="alert-badge warning"></span>' : ''}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-small btn-primary" onclick="restockItem(${item.id})">
+                                <i class="fas fa-plus"></i> Restock
+                            </button>
+                        </div>
+                    </td>
+                `;
+                inventoryTable.appendChild(row);
+            });
+        }
+
+        // Menu Item Functions - FIXED: Now properly saves images
+        window.editMenuItem = function(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            if (!item) return;
+            
+            currentEditingItem = item;
+            uploadedImageData = item.image || null;
+            document.getElementById('modalMenuTitle').textContent = 'Edit Menu Item';
+            
+            // Fill form
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemCategory').value = item.category;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemStatus').value = item.status;
+            document.getElementById('itemDescription').value = item.description || '';
+            
+            // Set image preview
+            if (item.image) {
+                imagePreview.innerHTML = `<img src="${item.image}" alt="Preview">`;
+            } else {
+                imagePreview.innerHTML = '<i class="fas fa-image"></i><span>No image selected</span>';
+            }
+            
+            // Show delete button
+            document.getElementById('deleteMenuItemBtn').style.display = 'block';
+            
+            // Show modal
+            menuModal.classList.add('active');
+        };
+
+        window.deleteMenuItem = async function(itemId) {
+            if (!confirm('Are you sure you want to delete this menu item?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/products/${itemId}`, {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                if (!res.ok) {
+                    const data = await res.json();
+                    showNotification(data.error || 'Failed to delete menu item', 'error');
+                    return;
+                }
+                const index = menuItems.findIndex(item => item.id === itemId);
+                if (index !== -1) menuItems.splice(index, 1);
+                loadMenuItems('all');
+                showNotification('Menu item deleted successfully', 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        };
+
+        // Add menu item button
+        document.getElementById('addMenuItemBtn').addEventListener('click', function() {
+            currentEditingItem = null;
+            uploadedImageData = null;
+            document.getElementById('modalMenuTitle').textContent = 'Add Menu Item';
+            
+            // Clear form
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemCategory').value = '';
+            document.getElementById('itemPrice').value = '';
+            document.getElementById('itemStatus').value = 'available';
+            document.getElementById('itemDescription').value = '';
+            document.getElementById('itemImage').value = '';
+            imagePreview.innerHTML = '<i class="fas fa-image"></i><span>No image selected</span>';
+            
+            // Hide delete button
+            document.getElementById('deleteMenuItemBtn').style.display = 'none';
+            
+            // Show modal
+            menuModal.classList.add('active');
+        });
+
+        // If a new image was picked (base64 data URL), upload it to the server first
+        // and get back a real file URL. If it's already a URL (unchanged existing
+        // image) or empty, just pass it through as-is.
+        async function resolveImageForSave() {
+            if (!uploadedImageData) return uploadedImageData;
+            if (!uploadedImageData.startsWith('data:image/')) return uploadedImageData; // already a URL
+            
+            const res = await fetch(`${API_BASE}/api/upload/product-image`, {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({ image: uploadedImageData })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to upload image');
+            return data.url;
+        }
+
+        // Save menu item - creates or updates the product in SQLite via the API
+        document.getElementById('saveMenuItemBtn').addEventListener('click', async function() {
+            const name = document.getElementById('itemName').value.trim();
+            const category = document.getElementById('itemCategory').value;
+            const price = parseInt(document.getElementById('itemPrice').value);
+            const status = document.getElementById('itemStatus').value;
+            const description = document.getElementById('itemDescription').value.trim();
+            
+            if (!name || !category || !price || isNaN(price)) {
+                showNotification('Please fill all required fields correctly', 'error');
+                return;
+            }
+            
+            const saveBtn = document.getElementById('saveMenuItemBtn');
+            saveBtn.disabled = true;
+            
+            try {
+                let imageValue;
+                try {
+                    imageValue = await resolveImageForSave();
+                } catch (uploadErr) {
+                    showNotification(uploadErr.message || 'Failed to upload image', 'error');
+                    return;
+                }
+                
+                let response, savedItem;
+                if (currentEditingItem) {
+                    // Update existing item
+                    const payload = { name, category, price, status, description };
+                    if (imageValue !== undefined) payload.image = imageValue;
+                    
+                    response = await fetch(`${API_BASE}/api/products/${currentEditingItem.id}`, {
+                        method: 'PUT',
+                        headers: authHeaders(),
+                        body: JSON.stringify(payload)
+                    });
+                    savedItem = await response.json();
+                    if (!response.ok) {
+                        showNotification(savedItem.error || 'Failed to update menu item', 'error');
+                        return;
+                    }
+                    const idx = menuItems.findIndex(i => i.id === currentEditingItem.id);
+                    if (idx !== -1) menuItems[idx] = savedItem;
+                    showNotification('Menu item updated successfully', 'success');
+                } else {
+                    // Add new item
+                    response = await fetch(`${API_BASE}/api/products`, {
+                        method: 'POST',
+                        headers: authHeaders(),
+                        body: JSON.stringify({
+                            name, category, price, status, description,
+                            stock: 50,
+                            bestSeller: false,
+                            image: imageValue || ''
+                        })
+                    });
+                    savedItem = await response.json();
+                    if (!response.ok) {
+                        showNotification(savedItem.error || 'Failed to add menu item', 'error');
+                        return;
+                    }
+                    menuItems.push(savedItem);
+                    showNotification('Menu item added successfully', 'success');
+                }
+                
+                loadMenuItems('all');
+                closeModal();
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            } finally {
+                saveBtn.disabled = false;
+            }
+        });
+
+        // Delete menu item from modal
+        document.getElementById('deleteMenuItemBtn').addEventListener('click', function() {
+            if (!currentEditingItem) return;
+            deleteMenuItem(currentEditingItem.id);
+            closeModal();
+        });
+
+        // Close modal
+        document.getElementById('closeMenuModal').addEventListener('click', closeModal);
+        document.getElementById('cancelMenuItemBtn').addEventListener('click', closeModal);
+
+        function closeModal() {
+            menuModal.classList.remove('active');
+            orderModal.classList.remove('active');
+            messageModal.classList.remove('active');
+            replyModal.classList.remove('active');
+            currentEditingItem = null;
+            currentEditingOrder = null;
+            currentEditingMessage = null;
+            currentReplyingMessage = null;
+            uploadedImageData = null;
+        }
+
+        // Close reply modal
+        function closeReplyModal() {
+            replyModal.classList.remove('active');
+            currentReplyingMessage = null;
+        }
+
+        // Order Functions
+        window.updateOrderStatus = async function(orderId, newStatus) {
+            try {
+                const res = await fetch(`${API_BASE}/api/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const updated = await res.json();
+                if (!res.ok) {
+                    showNotification(updated.error || 'Failed to update order status', 'error');
+                    return;
+                }
+                const idx = orders.findIndex(o => o.id === orderId);
+                if (idx !== -1) orders[idx] = updated;
+                
+                loadOrders();
+                
+                const statusText = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                showNotification(`Order #${orderId} status updated to ${statusText}`, 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        };
+
+        window.viewOrderDetails = function(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            currentEditingOrder = order;
+            
+            const orderDate = new Date(order.date);
+            const formattedDate = orderDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            const orderType = formatOrderType(order.orderType);
+            const statusText = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+            
+            let itemsHtml = '';
+            if (Array.isArray(order.items)) {
+                order.items.forEach(item => {
+                    itemsHtml += `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+                            <div>
+                                ${item.name} x ${item.quantity}
+                            </div>
+                            <div>Rs. ${(item.price * item.quantity).toFixed(0)}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            const orderDetails = document.getElementById('orderDetails');
+            orderDetails.innerHTML = `
+                <div class="order-view">
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 15px;">Order Information</h4>
+                        <div style="background: #f8f5f2; padding: 15px; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span><strong>Order ID:</strong></span>
+                                <span>#${order.id}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span><strong>Customer:</strong></span>
+                                <span>${order.customerName}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span><strong>Email:</strong></span>
+                                <span>${order.customerEmail}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span><strong>Phone:</strong></span>
+                                <span>${order.customerPhone}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span><strong>Order Type:</strong></span>
+                                <span>${orderType}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span><strong>Payment Method:</strong></span>
+                                <span>${order.paymentMethod || 'Not specified'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span><strong>Status:</strong></span>
+                                <span class="status-badge status-${order.status}">${statusText}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span><strong>Order Date:</strong></span>
+                                <span>${formattedDate}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 15px;">Order Items</h4>
+                        <div style="background: #f8f5f2; padding: 15px; border-radius: 8px;">
+                            ${itemsHtml || '<p>No items found</p>'}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: var(--primary-color); margin-bottom: 15px;">Order Summary</h4>
+                        <div style="background: #f8f5f2; padding: 15px; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Subtotal:</span>
+                                <span>Rs. ${order.subtotal.toFixed(0)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Delivery Fee:</span>
+                                <span>Rs. ${order.deliveryFee || 0}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Tax (5%):</span>
+                                <span>Rs. ${order.tax.toFixed(0)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 2px solid #ddd; font-weight: 600;">
+                                <span>Total:</span>
+                                <span>Rs. ${order.total.toFixed(0)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-receipt receipt" aria-hidden="true">
+                    <div class="receipt-header">
+                        <div class="logo-small">Brew & Bean</div>
+                        <div class="shop-info">123 Coffee Street, Downtown • (021) 123-4567</div>
+                    </div>
+
+                    <div class="receipt-meta">
+                        <div><strong>Order #${order.id}</strong></div>
+                        <div style="margin-top:4px;">${formattedDate}</div>
+                        <div style="margin-top:6px;">Type: ${orderType} &nbsp;|&nbsp; Status: <span class="status-badge status-${order.status}">${statusText}</span></div>
+                    </div>
+
+                    <hr class="dashed" />
+
+                    <div class="receipt-items">
+                        ${itemsHtml || '<div>No items found</div>'}
+                    </div>
+
+                    <hr class="dashed" />
+
+                    <div class="receipt-totals">
+                        <div><span>Subtotal</span><span>Rs. ${order.subtotal.toFixed(0)}</span></div>
+                        <div><span>Delivery</span><span>Rs. ${order.deliveryFee || 0}</span></div>
+                        <div><span>Tax (5%)</span><span>Rs. ${order.tax.toFixed(0)}</span></div>
+                        <div class="total"><span>Total</span><span>Rs. ${order.total.toFixed(0)}</span></div>
+                    </div>
+
+                    <div style="margin-top:8px; font-size:13px;">Payment: ${order.paymentMethod || 'Not specified'}</div>
+
+                    <div class="receipt-footer">Thank you for your order — Brew & Bean</div>
+                </div>
+            `;
+            
+            orderModal.classList.add('active');
+        };
+
+        // Close order modal
+        document.getElementById('closeOrderModal').addEventListener('click', closeModal);
+        document.getElementById('closeOrderBtn').addEventListener('click', closeModal);
+
+        // Print order
+        document.getElementById('printOrderBtn').addEventListener('click', function() {
+            window.print();
+        });
+
+        // Compact print feature removed
+
+        // Refresh orders
+        document.getElementById('refreshOrdersBtn').addEventListener('click', async function() {
+            const activeFilter = document.querySelector('.filter-btn[data-status].active')?.getAttribute('data-status') || 'all';
+            await refreshOrders(activeFilter);
+            showNotification('Orders refreshed', 'success');
+        });
+
+        // Filter orders
+        document.querySelectorAll('[data-status]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const status = this.getAttribute('data-status');
+                
+                // Update active filter
+                document.querySelectorAll('[data-status]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Load filtered orders
+                refreshOrders(status);
+            });
+        });
+
+        // Reservation Functions
+        window.confirmReservation = async function(reservationId) {
+            const reservation = reservations.find(r => r.id === reservationId);
+            if (!reservation || reservation.status !== 'pending') return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/reservations/${reservationId}`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ status: 'confirmed' })
+                });
+                const updated = await res.json();
+                if (!res.ok) {
+                    showNotification(updated.error || 'Failed to confirm reservation', 'error');
+                    return;
+                }
+                const idx = reservations.findIndex(r => r.id === reservationId);
+                if (idx !== -1) reservations[idx] = updated;
+                loadReservations();
+                showNotification(`Reservation #${reservationId} confirmed`, 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        };
+
+        window.cancelReservation = async function(reservationId) {
+            const reservation = reservations.find(r => r.id === reservationId);
+            if (!reservation) return;
+            
+            try {
+                if (reservation.status === 'cancelled') {
+                    // Remove cancelled reservation permanently
+                    const res = await fetch(`${API_BASE}/api/reservations/${reservationId}`, {
+                        method: 'DELETE',
+                        headers: authHeaders()
+                    });
+                    if (!res.ok) {
+                        const data = await res.json();
+                        showNotification(data.error || 'Failed to remove reservation', 'error');
+                        return;
+                    }
+                    const index = reservations.findIndex(r => r.id === reservationId);
+                    if (index !== -1) reservations.splice(index, 1);
+                    showNotification(`Reservation #${reservationId} removed`, 'success');
+                } else {
+                    // Cancel reservation
+                    if (!confirm(`Cancel reservation #${reservationId} for ${reservation.customerName}?`)) return;
+                    
+                    const res = await fetch(`${API_BASE}/api/reservations/${reservationId}`, {
+                        method: 'PUT',
+                        headers: authHeaders(),
+                        body: JSON.stringify({ status: 'cancelled' })
+                    });
+                    const updated = await res.json();
+                    if (!res.ok) {
+                        showNotification(updated.error || 'Failed to cancel reservation', 'error');
+                        return;
+                    }
+                    const idx = reservations.findIndex(r => r.id === reservationId);
+                    if (idx !== -1) reservations[idx] = updated;
+                    showNotification(`Reservation #${reservationId} cancelled`, 'success');
+                }
+                loadReservations();
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        };
+
+        // Message Functions
+        window.viewMessageDetails = function(messageId) {
+            const message = contactMessages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            currentEditingMessage = message;
+            
+            // Mark as read
+            if (message.status === 'unread') {
+                message.status = 'read';
+                fetch(`${API_BASE}/api/contact/${messageId}`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ status: 'read' })
+                }).catch(err => console.error('Could not mark message as read:', err));
+                loadContactMessages();
+            }
+            
+            const messageDate = new Date(message.date);
+            const formattedDate = messageDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Get replies for this message
+            const replies = messageReplies.filter(reply => reply.messageId === message.id);
+            
+            let repliesHtml = '';
+            if (replies.length > 0) {
+                repliesHtml = `
+                    <div class="reply-section">
+                        <h4 style="color: var(--primary-color); margin-bottom: 15px;">Previous Replies</h4>
+                        <div class="previous-replies">
+                            ${replies.map(reply => `
+                                <div class="reply-item">
+                                    <div class="reply-meta">
+                                        <strong>${reply.from === 'manager' ? 'Manager' : 'Support Team'}</strong> • 
+                                        ${new Date(reply.date).toLocaleString()}
+                                    </div>
+                                    <div>${reply.message}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const messageDetails = document.getElementById('messageDetails');
+            messageDetails.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 15px;">Message Information</h4>
+                    <div style="background: #f8f5f2; padding: 15px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span><strong>Date:</strong></span>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span><strong>From:</strong></span>
+                            <span>${message.name}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span><strong>Email:</strong></span>
+                            <span>${message.email}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span><strong>Subject:</strong></span>
+                            <span>${message.subject}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span><strong>Status:</strong></span>
+                            <span class="message-status status-${message.status}">
+                                ${message.status === 'unread' ? 'Unread' : 'Read'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 15px;">Message Content</h4>
+                    <div style="background: #f8f5f2; padding: 15px; border-radius: 8px; white-space: pre-wrap;">
+                        ${message.message}
+                    </div>
+                </div>
+                
+                ${repliesHtml}
+            `;
+            
+            messageModal.classList.add('active');
+        };
+
+        // Open reply modal
+        function openReplyModal() {
+            if (!currentEditingMessage) return;
+            
+            currentReplyingMessage = currentEditingMessage;
+            
+            // Populate original message
+            const originalMessageDiv = document.getElementById('originalMessage');
+            originalMessageDiv.innerHTML = `
+                <div style="background: #f8f5f2; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 10px;">Replying to:</h4>
+                    <p><strong>From:</strong> ${currentEditingMessage.name} (${currentEditingMessage.email})</p>
+                    <p><strong>Subject:</strong> ${currentEditingMessage.subject}</p>
+                    <p><strong>Message:</strong> ${currentEditingMessage.message.substring(0, 200)}${currentEditingMessage.message.length > 200 ? '...' : ''}</p>
+                </div>
+            `;
+            
+            // Clear reply form
+            document.getElementById('replyMessage').value = '';
+            document.getElementById('replyFrom').value = 'manager';
+            
+            // Show reply modal
+            replyModal.classList.add('active');
+        }
+
+        // Send reply
+        async function sendReply(e) {
+            e.preventDefault();
+            
+            if (!currentReplyingMessage) return;
+            
+            const replyText = document.getElementById('replyMessage').value.trim();
+            const replyFrom = document.getElementById('replyFrom').value;
+            
+            if (!replyText) {
+                showNotification('Please enter a reply message', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/contact/${currentReplyingMessage.id}/reply`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ message: replyText, from: replyFrom })
+                });
+                const reply = await res.json();
+                
+                if (!res.ok) {
+                    showNotification(reply.error || 'Failed to send reply', 'error');
+                    return;
+                }
+                
+                // Add to local replies cache
+                messageReplies.push(reply);
+                const msg = contactMessages.find(m => m.id === currentReplyingMessage.id);
+                if (msg) msg.status = 'read';
+                
+                // Show success
+                showNotification('Reply sent successfully', 'success');
+                
+                // Close modals
+                closeReplyModal();
+                closeModal();
+                
+                // Reload messages
+                loadContactMessages();
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        }
+
+        window.deleteMessage = async function(messageId) {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/contact/${messageId}`, {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                if (!res.ok) {
+                    const data = await res.json();
+                    showNotification(data.error || 'Failed to delete message', 'error');
+                    return;
+                }
+                const index = contactMessages.findIndex(m => m.id === messageId);
+                if (index !== -1) contactMessages.splice(index, 1);
+                loadContactMessages();
+                showNotification('Message deleted successfully', 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        };
+
+        async function markAllMessagesAsRead() {
+            const hasUnread = contactMessages.some(message => message.status === 'unread');
+            if (!hasUnread) {
+                showNotification('No unread messages', 'info');
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/contact/mark-all-read`, {
+                    method: 'PUT',
+                    headers: authHeaders()
+                });
+                if (!res.ok) {
+                    showNotification('Failed to mark messages as read', 'error');
+                    return;
+                }
+                contactMessages.forEach(message => { message.status = 'read'; });
+                loadContactMessages();
+                showNotification('All messages marked as read', 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        }
+
+        // Close message modal
+        document.getElementById('closeMessageModal').addEventListener('click', closeModal);
+        document.getElementById('closeMessageBtn').addEventListener('click', closeModal);
+
+        // Inventory Functions
+        window.restockItem = async function(itemId) {
+            const item = inventory.find(i => i.id === itemId);
+            if (!item) return;
+            
+            const quantity = prompt(`Restock ${item.name}\nCurrent stock: ${item.stock} ${item.unit}\nEnter quantity to add:`, "10");
+            if (!quantity || isNaN(quantity) || quantity <= 0) return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/inventory/${itemId}`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ addStock: parseInt(quantity) })
+                });
+                const updated = await res.json();
+                if (!res.ok) {
+                    showNotification(updated.error || 'Failed to restock item', 'error');
+                    return;
+                }
+                const idx = inventory.findIndex(i => i.id === itemId);
+                if (idx !== -1) inventory[idx] = updated;
+                loadInventory();
+                showNotification(`${quantity} ${item.unit} added to ${item.name}`, 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        };
+
+        // Add inventory button
+        document.getElementById('addInventoryBtn').addEventListener('click', async function() {
+            const itemName = prompt('Enter item name:');
+            if (!itemName) return;
+            
+            const category = prompt('Enter category (Ingredients, Dairy, Supplies):', 'Ingredients');
+            if (!category) return;
+            
+            const stock = prompt('Enter initial stock:', "10");
+            if (!stock || isNaN(stock)) return;
+            
+            const unit = prompt('Enter unit (kg, liters, pieces):', 'kg');
+            if (!unit) return;
+            
+            const reorder = prompt('Enter reorder level:', "5");
+            if (!reorder || isNaN(reorder)) return;
+            
+            const supplier = prompt('Enter supplier name (optional):');
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/inventory`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify({
+                        name: itemName, category, stock: parseInt(stock), unit,
+                        reorder: parseInt(reorder), supplier: supplier || ''
+                    })
+                });
+                const newItem = await res.json();
+                if (!res.ok) {
+                    showNotification(newItem.error || 'Failed to add inventory item', 'error');
+                    return;
+                }
+                inventory.push(newItem);
+                loadInventory();
+                showNotification(`${itemName} added to inventory`, 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        });
+
+        // Report Functions
+        function loadSalesReport() {
+            // Calculate daily sales summary
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(order => {
+                const orderDate = new Date(order.date).toISOString().split('T')[0];
+                return orderDate === today;
+            });
+            
+            const totalRevenue = todayOrders.reduce((sum, order) => sum + order.total, 0);
+            const avgOrderValue = todayOrders.length > 0 ? totalRevenue / todayOrders.length : 0;
+            const successRate = todayOrders.length > 0 ? 
+                (todayOrders.filter(order => order.status === 'completed').length / todayOrders.length * 100).toFixed(1) : 0;
+            
+            const dailySalesSummary = document.getElementById('dailySalesSummary');
+            dailySalesSummary.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0dcd6;">
+                    <span>Total Revenue</span>
+                    <strong>Rs. ${totalRevenue.toFixed(0)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0dcd6;">
+                    <span>Average Order Value</span>
+                    <strong>Rs. ${avgOrderValue.toFixed(0)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0dcd6;">
+                    <span>Total Orders</span>
+                    <strong>${todayOrders.length}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Success Rate</span>
+                    <strong style="color: #8B4513;">${successRate}%</strong>
+                </div>
+            `;
+            
+            // Calculate monthly performance (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const lastMonthOrders = orders.filter(order => new Date(order.date) >= thirtyDaysAgo);
+            const lastMonthRevenue = lastMonthOrders.reduce((sum, order) => sum + order.total, 0);
+            const prevMonthRevenue = lastMonthRevenue * 0.92; // Simulating 8% growth
+            
+            const revenueGrowth = lastMonthRevenue > 0 ? ((lastMonthRevenue - prevMonthRevenue) / prevMonthRevenue * 100).toFixed(1) : 0;
+            
+            const monthlyPerformance = document.getElementById('monthlyPerformance');
+            monthlyPerformance.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0dcd6;">
+                    <span>Revenue Growth</span>
+                    <strong style="color: #8B4513;">+${revenueGrowth}%</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0dcd6;">
+                    <span>Customer Growth</span>
+                    <strong style="color: #8B4513;">+12.5%</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0dcd6;">
+                    <span>Order Completion</span>
+                    <strong style="color: #8B4513;">98.2%</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Customer Satisfaction</span>
+                    <strong style="color: #8B4513;">4.8/5.0</strong>
+                </div>
+            `;
+        }
+        
+        function loadProductsReport() {
+            // Calculate top products from all orders
+            const itemCounts = {};
+            const itemRevenue = {};
+            
+            orders.forEach(order => {
+                if (Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        if (!itemCounts[item.name]) {
+                            itemCounts[item.name] = 0;
+                            itemRevenue[item.name] = 0;
+                        }
+                        itemCounts[item.name] += item.quantity;
+                        itemRevenue[item.name] += item.price * item.quantity;
+                    });
+                }
+            });
+            
+            const sortedItems = Object.entries(itemCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            const topProductsList = document.getElementById('topProductsList');
+            if (sortedItems.length > 0) {
+                let listHTML = '<ol style="color: #666; line-height: 2;">';
+                sortedItems.forEach(([itemName, count], index) => {
+                    const revenue = itemRevenue[itemName] || 0;
+                    listHTML += `
+                        <li>${itemName} - ${count} orders (Rs. ${revenue.toFixed(0)})</li>
+                    `;
+                });
+                listHTML += '</ol>';
+                topProductsList.innerHTML = listHTML;
+            } else {
+                topProductsList.innerHTML = '<p style="text-align: center; color: #666;">No sales data available</p>';
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // Report data helper - shared by both export functions
+        // ---------------------------------------------------------------
+        function buildReportData() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(order => new Date(order.date).toISOString().split('T')[0] === today);
+            const totalRevenue = todayOrders.reduce((sum, order) => sum + order.total, 0);
+            const avgOrderValue = todayOrders.length > 0 ? totalRevenue / todayOrders.length : 0;
+            const successRate = todayOrders.length > 0
+                ? (todayOrders.filter(o => o.status === 'completed').length / todayOrders.length * 100).toFixed(1)
+                : 0;
+
+            const itemCounts = {};
+            const itemRevenue = {};
+            orders.forEach(order => {
+                if (Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        itemCounts[item.name] = (itemCounts[item.name] || 0) + item.quantity;
+                        itemRevenue[item.name] = (itemRevenue[item.name] || 0) + item.price * item.quantity;
+                    });
+                }
+            });
+            const topProducts = Object.entries(itemCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(([name, qty]) => ({ name, qty, revenue: itemRevenue[name] || 0 }));
+
+            const allOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            return { today, todayOrders, totalRevenue, avgOrderValue, successRate, topProducts, allOrders };
+        }
+
+        // Export the Sales Reports & Analytics section as a PDF
+        function exportReportAsPdf() {
+            if (!window.jspdf) {
+                showNotification('PDF export library failed to load. Check your internet connection.', 'error');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const data = buildReportData();
+
+            doc.setFontSize(18);
+            doc.text('Brew & Bean - Sales Report', 14, 18);
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 25);
+
+            doc.autoTable({
+                startY: 32,
+                head: [['Daily Summary', 'Value']],
+                body: [
+                    ['Total Revenue', `Rs. ${data.totalRevenue.toFixed(0)}`],
+                    ['Average Order Value', `Rs. ${data.avgOrderValue.toFixed(0)}`],
+                    ['Total Orders Today', String(data.todayOrders.length)],
+                    ['Success Rate', `${data.successRate}%`]
+                ],
+                theme: 'striped',
+                headStyles: { fillColor: [139, 69, 19] }
+            });
+
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 10,
+                head: [['#', 'Product', 'Qty Sold', 'Revenue (Rs.)']],
+                body: data.topProducts.map((p, i) => [i + 1, p.name, p.qty, p.revenue.toFixed(0)]),
+                theme: 'striped',
+                headStyles: { fillColor: [139, 69, 19] }
+            });
+
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 10,
+                head: [['Order #', 'Date', 'Customer', 'Total (Rs.)', 'Status']],
+                body: data.allOrders.map(o => [
+                    `#${o.id}`,
+                    new Date(o.date).toLocaleDateString(),
+                    o.customerName,
+                    o.total.toFixed(0),
+                    o.status
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [139, 69, 19] }
+            });
+
+            doc.save(`sales-report-${data.today}.pdf`);
+            showNotification('Sales report exported as PDF', 'success');
+        }
+
+        // Export the Sales Reports & Analytics section as an Excel workbook
+        function exportReportAsExcel() {
+            if (!window.XLSX) {
+                showNotification('Excel export library failed to load. Check your internet connection.', 'error');
+                return;
+            }
+            const data = buildReportData();
+            const wb = XLSX.utils.book_new();
+
+            const summarySheet = XLSX.utils.aoa_to_sheet([
+                ['Brew & Bean - Sales Report'],
+                [`Generated: ${new Date().toLocaleString()}`],
+                [],
+                ['Daily Summary', 'Value'],
+                ['Total Revenue', data.totalRevenue],
+                ['Average Order Value', Math.round(data.avgOrderValue)],
+                ['Total Orders Today', data.todayOrders.length],
+                ['Success Rate (%)', data.successRate]
+            ]);
+            XLSX.utils.book_append_sheet(wb, summarySheet, 'Summary');
+
+            const productsSheet = XLSX.utils.json_to_sheet(
+                data.topProducts.map((p, i) => ({
+                    Rank: i + 1,
+                    Product: p.name,
+                    'Qty Sold': p.qty,
+                    'Revenue (Rs.)': p.revenue
+                }))
+            );
+            XLSX.utils.book_append_sheet(wb, productsSheet, 'Top Products');
+
+            const ordersSheet = XLSX.utils.json_to_sheet(
+                data.allOrders.map(o => ({
+                    'Order #': o.id,
+                    Date: new Date(o.date).toLocaleString(),
+                    Customer: o.customerName,
+                    Email: o.customerEmail,
+                    'Total (Rs.)': o.total,
+                    Status: o.status,
+                    'Order Type': o.orderType,
+                    'Payment Method': o.paymentMethod
+                }))
+            );
+            XLSX.utils.book_append_sheet(wb, ordersSheet, 'Orders');
+
+            XLSX.writeFile(wb, `sales-report-${data.today}.xlsx`);
+            showNotification('Sales report exported as Excel', 'success');
+        }
+
+        // Settings Functions
+        async function saveShopSettings() {
+            const shopName = document.getElementById('shopName').value;
+            const openingTime = document.getElementById('openingTime').value;
+            const closingTime = document.getElementById('closingTime').value;
+            const contactEmail = document.getElementById('contactEmail').value;
+            const contactPhone = document.getElementById('contactPhone').value;
+            const shopAddress = document.getElementById('shopAddress').value;
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/settings/shop`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ shopName, openingTime, closingTime, contactEmail, contactPhone, shopAddress })
+                });
+                if (!res.ok) {
+                    showNotification('Failed to save shop settings', 'error');
+                    return;
+                }
+                showNotification('Shop settings saved successfully', 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        }
+        
+        async function updateProfile() {
+            const managerName = document.getElementById('managerName').value;
+            const managerEmail = document.getElementById('managerEmail').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword && newPassword !== confirmPassword) {
+                showNotification('New passwords do not match', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/manager/profile`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({
+                        name: managerName,
+                        email: managerEmail,
+                        currentPassword: currentPassword || undefined,
+                        newPassword: newPassword || undefined
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    showNotification(data.error || 'Failed to update profile', 'error');
+                    return;
+                }
+                localStorage.setItem('managerInfo', JSON.stringify(data.manager));
+                showNotification('Profile updated successfully', 'success');
+                
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        }
+        
+        async function saveTaxSettings() {
+            const taxRate = parseFloat(document.getElementById('taxRate').value);
+            const serviceCharge = parseFloat(document.getElementById('serviceCharge').value);
+            const deliveryFee = parseFloat(document.getElementById('deliveryFee').value);
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/settings/tax`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ taxRate, serviceCharge, deliveryFee })
+                });
+                if (!res.ok) {
+                    showNotification('Failed to save tax settings', 'error');
+                    return;
+                }
+                showNotification('Tax settings saved successfully', 'success');
+            } catch (err) {
+                console.error(err);
+                showNotification('Unable to reach the server', 'error');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            // Remove any existing notification
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" 
+                   style="color: ${type === 'success' ? '#8B4513' : type === 'error' ? '#D2691E' : '#2196F3'}"></i>
+                <div class="notification-content">
+                    <h4>${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Info'}</h4>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
